@@ -13,7 +13,7 @@
 
 # Silicon Labs Zephyr Applications #
 
-[![Version Badge](https://img.shields.io/badge/-v1.0.0-green)](https://github.com/SiliconLabs/zephyr_applications/releases)
+[![Version Badge](https://img.shields.io/badge/-v1.0.1-green)](https://github.com/SiliconLabs/zephyr_applications/releases)
 ![License badge](https://img.shields.io/badge/License-Zlib-green)
 
 This repository contains example projects that demonstrate various applications running on Zephyr OS supported on Silicon Labs Development Kits.
@@ -41,13 +41,17 @@ For setting up the Zephyr environment, please follow some steps below:
   |  [Python](https://www.python.org/) | 3.8 |
   |  [Devicetree complier](https://www.devicetree.org/) | 1.4.6 |
 
-- Get Zephyr and install Python dependencies.
+- Get [Zephyr v3.4.0](https://github.com/zephyrproject-rtos/zephyr/releases/tag/v3.4.0) and install Python dependencies.
 
 - Install Zephyr SDK.
 
 **Note:**
 
-- For more information regarding setting up the environment, please refer to [this guide] on Zephyr's homepage(https://docs.zephyrproject.org/latest/develop/getting_started/index.html).
+- The application examples in this repository are developed using [Zephyr v3.4.0](https://github.com/zephyrproject-rtos/zephyr/releases/tag/v3.4.0). For installing Zephyr v3.4.0, please use the following command instead when setting up the Zephyr environment::
+
+  `west init zephyrproject -m https://github.com/zephyrproject-rtos/zephyr --mr v3.4.0`
+
+- For more information regarding setting up the environment, please refer to [this guide](https://docs.zephyrproject.org/latest/develop/getting_started/index.html) on Zephyr's homepage.
 
 - We would advise using the Python version between 3.8 and 3.10.
 
