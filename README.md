@@ -13,7 +13,7 @@
 
 # Silicon Labs Zephyr Applications #
 
-[![Version Badge](https://img.shields.io/badge/-v1.0.1-green)](https://github.com/SiliconLabs/zephyr_applications/releases)
+[![Version Badge](https://img.shields.io/badge/-v1.1.0-green)](https://github.com/SiliconLabs/zephyr_applications/releases)
 ![License badge](https://img.shields.io/badge/License-Zlib-green)
 
 This repository contains example projects that demonstrate various applications running on Zephyr OS supported on Silicon Labs Development Kits.
@@ -25,6 +25,9 @@ All examples in this repository are considered to be EXPERIMENTAL QUALITY, which
 |:--:|:-------------|:---------------:|
 |  1 |Zephyr - MikroBus Demo | [Click Here](./zephyr_mikrobus_demo/)|
 |  2 |Zephyr - Si7210 Hall Effect Magnetic Sensor | [Click Here](./zephyr_si7210_onboard_led/)|
+|  3 |Zephyr - Qwiic Connector | [Click Here](./zephyr_qwiic_connector/)|
+|  4 |Zephyr - EFR Connect Demo - Blinky | [Click Here](./zephyr_efr_connect_demo_blinky/)|
+|  5 |Zephyr - Modified SoC Thermometer | [Click Here](./zephyr_modified_soc_thermometer/)|
 
 
 ## Setting up environment ##
