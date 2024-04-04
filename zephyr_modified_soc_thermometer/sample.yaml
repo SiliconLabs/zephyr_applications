@@ -1,7 +1,0 @@
-sample:
-  description: This example implements the Health Thermometer service with the Silabs development Kit via Bluetooth on Zephyr OS.
-  name: zephyr_modified_soc_thermometer
-
-tests:
-  sample.basic.zephyr_mikrobus_demo:
-    tags: experimental

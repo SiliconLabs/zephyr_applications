@@ -1,0 +1,4 @@
+menu "Drivers"
+rsource "sensor/Kconfig"
+rsource "input/Kconfig"
+endmenu

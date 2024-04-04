@@ -1,0 +1,20 @@
+/*
+ * Copyright (c) 2020, Patrick Moffitt <patrick@moffitt.com>
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * i2c interface for the Feather nRF52840 Express and the
+ * Adafruit BME680.
+ */
+
+&i2c0 {
+	si7210: si7210@30 {
+		compatible = "silabs,si7210";
+		reg = <0x30>;
+	};
+};
+
+&sensor_enable {
+	enable-gpios = <&gpioc GECKO_PIN(9) GPIO_ACTIVE_HIGH>;
+	startup-delay-us = <100000>;
+};

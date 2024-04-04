@@ -1,0 +1,4 @@
+if SENSOR
+rsource "icm20689/Kconfig"
+rsource "bmp384/Kconfig"
+endif # SENSOR

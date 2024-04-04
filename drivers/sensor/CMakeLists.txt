@@ -1,0 +1,2 @@
+add_subdirectory(icm20689)
+add_subdirectory(bmp384)

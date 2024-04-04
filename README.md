@@ -13,7 +13,7 @@
 
 # Silicon Labs Zephyr Applications #
 
-[![Version Badge](https://img.shields.io/badge/-v1.1.0-green)](https://github.com/SiliconLabs/zephyr_applications/releases)
+[![Version Badge](https://img.shields.io/badge/-v1.2.0-green)](https://github.com/SiliconLabs/zephyr_applications/releases)
 ![License badge](https://img.shields.io/badge/License-Zlib-green)
 
 This repository contains example projects that demonstrate various applications running on Zephyr OS supported on Silicon Labs Development Kits.
@@ -23,11 +23,14 @@ All examples in this repository are considered to be EXPERIMENTAL QUALITY, which
 
 | No | Example name | Link to example |
 |:--:|:-------------|:---------------:|
-|  1 |Zephyr - MikroBus Demo | [Click Here](./zephyr_mikrobus_demo/)|
-|  2 |Zephyr - Si7210 Hall Effect Magnetic Sensor | [Click Here](./zephyr_si7210_onboard_led/)|
-|  3 |Zephyr - Qwiic Connector | [Click Here](./zephyr_qwiic_connector/)|
-|  4 |Zephyr - EFR Connect Demo - Blinky | [Click Here](./zephyr_efr_connect_demo_blinky/)|
-|  5 |Zephyr - Modified SoC Thermometer | [Click Here](./zephyr_modified_soc_thermometer/)|
+|  1 |Zephyr - MikroBus Demo | [Click Here](./applications/zephyr_mikrobus_demo/)|
+|  2 |Zephyr - Si7210 Hall Effect Magnetic Sensor | [Click Here](./applications/zephyr_si7210_onboard_led/)|
+|  3 |Zephyr - Qwiic Connector | [Click Here](./applications/zephyr_qwiic_connector/)|
+|  4 |Zephyr - EFR Connect Demo - Blinky | [Click Here](./applications/zephyr_efr_connect_demo_blinky/)|
+|  5 |Zephyr - Modified SoC Thermometer | [Click Here](./applications/zephyr_modified_soc_thermometer/)|
+|  6 |Zephyr - OTA Firmware Update over BLE | [Click Here](./applications/zephyr_ota_firmware_update/)|
+|  7 |Zephyr - SoC Throughput | [Click Here](./applications/zephyr_soc_throughput/)|
+|  8 |Zephyr - BTHome v2 - xG24/xG27 Dev Kit Sensors with LVGL | [Click Here](./applications/zephyr_bthome_v2/)|
 
 
 ## Setting up environment ##
@@ -44,15 +47,101 @@ For setting up the Zephyr environment, please follow some steps below:
   |  [Python](https://www.python.org/) | 3.8 |
   |  [Devicetree complier](https://www.devicetree.org/) | 1.4.6 |
 
-- Get [Zephyr v3.4.0](https://github.com/zephyrproject-rtos/zephyr/releases/tag/v3.4.0) and install Python dependencies.
+- Create a virtual environment and activate that environment.
 
-- Install Zephyr SDK.
+  - For Windows:
+    - `python -m venv zephyrproject\.venv`
+    - `zephyrproject\.venv\Scripts\activate.bat`
+  
+  - For Ubuntu:
+    -  `python3 -m venv ~/zephyrproject/.venv`
+    -  `source ~/zephyrproject/.venv/bin/activate`
+
+  - For MacOS:
+    -  `python3 -m venv ~/zephyrproject/.venv`
+    -  `source ~/zephyrproject/.venv/bin/activate`
+
+- Install **west**.
+
+  `pip install west`
+
+- Clone the Zephyr applications repository of Silicon Labs.
+
+  `cd zephyrproject`
+
+  `git clone https://github.com/SiliconLabs/zephyr_applications.git`
+
+- Initialize the workspace by running the following commands.
+
+  `west init -l zephyr_applications`
+
+  `west update`
+
+- Install additional Python dependencies.
+
+  `pip install -r zephyr/scripts/requirements.txt`
+
+- Fetch and store the Silicon Labs pre-built libraries
+
+  `west blobs fetch silabs`
+
+- Install the Zephyr SDK.
+
+  - Download and verify the [Zephyr SDK bundle](https://github.com/zephyrproject-rtos/sdk-ng/releases/tag/v0.16.5-1).
+
+  - Extract the Zephyr SDK bundle archive.
+
+  - Run the Zephyr SDK bundle setup script.
+
+  - For Windows:
+
+      - Open a cmd.exe terminal window as a **regular user** and then run the commands below:
+        ```
+        cd %HOMEPATH%
+        wget https://github.com/zephyrproject-rtos/sdk-ng/releases/download/v0.16.5-1/zephyr-sdk-0.16.5-1_windows-x86_64.7z
+        ```
+        ```
+        7z x zephyr-sdk-0.16.5-1_windows-x86_64.7z
+        ```
+        ```
+        cd zephyr-sdk-0.16.5-1
+        setup.cmd
+        ```
+
+  - For Ubuntu:
+      - Open a terminal and run the following commands:
+        ```
+        cd ~
+        wget https://github.com/zephyrproject-rtos/sdk-ng/releases/download/v0.16.5-1/zephyr-sdk-0.16.5-1_linux-x86_64.tar.xz
+        wget -O - https://github.com/zephyrproject-rtos/sdk-ng/releases/download/v0.16.5-1/sha256.sum | shasum --check --ignore-missing
+        ```
+        ```
+        tar xvf zephyr-sdk-0.16.5-1_linux-x86_64.tar.xz
+        ```
+        ```
+        cd zephyr-sdk-0.16.5-1
+        setup.sh
+        ```
+      - Install [udev](https://en.wikipedia.org/wiki/Udev) rules, which allow you to flash most Zephyr boards as a regular user.
+        - `sudo cp ~/zephyr-sdk-0.16.5-1/sysroots/x86_64-pokysdk-linux/usr/share/openocd/contrib/60-openocd.rules /etc/udev/rules.d`
+        - `sudo udevadm control --reload`
+
+  - For macOS:
+      - Open a terminal and run the following commands:
+        ```
+        cd ~
+        curl -L -O https://github.com/zephyrproject-rtos/sdk-ng/releases/download/v0.16.5-1/zephyr-sdk-0.16.5-1_macos-x86_64.tar.xz
+        curl -L https://github.com/zephyrproject-rtos/sdk-ng/releases/download/v0.16.5-1/sha256.sum | shasum --check --ignore-missing
+        ```
+        ```
+        tar xvf zephyr-sdk-0.16.5-1_macos-x86_64.tar.xz
+        ```
+        ```
+        cd zephyr-sdk-0.16.5-1
+        ./setup.sh
+        ```
 
 **Note:**
-
-- The application examples in this repository are developed using [Zephyr v3.4.0](https://github.com/zephyrproject-rtos/zephyr/releases/tag/v3.4.0). For installing Zephyr v3.4.0, please use the following command instead when setting up the Zephyr environment::
-
-  `west init zephyrproject -m https://github.com/zephyrproject-rtos/zephyr --mr v3.4.0`
 
 - For more information regarding setting up the environment, please refer to [this guide](https://docs.zephyrproject.org/latest/develop/getting_started/index.html) on Zephyr's homepage.
 
@@ -65,7 +154,7 @@ The following guides are relevant to how to be more familiar with Zephyr OS and 
 
 ### Getting started with basic examples ###
 
-You can start with a variety of examples in the `zephyrproject/zephyr/sample` directory. It might be best to approach Zephyr and understand how Zephyr works.
+You can start with a variety of examples in the `zephyrproject/zephyr/sample` directory. It might be best to approach Zephyr and understand how it works.
 
 The typical example outline as below:
 
@@ -76,10 +165,9 @@ The typical example outline as below:
   +--CmakeLists.txt               > Contains a set of directives and instructions describing the project's source files and targets
   +--Kconfig                      > Configure the Zephyr kernel and subsystems at build time to adapt them for specific application and platform needs.
   +--prj.config                   > This is a Kconfig fragment that specifies application-specific values for one or more Kconfig options.
-  +--README.rst                   > Readme file of the project.
-  +--sample.yaml                  > Sample definition and criteria.
+  +--README.md                   > Readme file of the project.
 ```
-If you want to develop your project, you should focus on some files that specify your projects, like the devicetree overlay file, CmakeLists.txt, Kconfig, and prj.config.
+If you want to develop your project, you should focus on some files that specify your projects, like the devicetree overlay file, CmakeLists.txt, Kconfig, and prj.conf.
 
 ### Build the application ###
 
@@ -89,9 +177,9 @@ The `build` command helps you build Zephyr applications from the source. The eas
 
 In case, you don't know the exact board's ID, you can get the supported board list using the `west boards` command.
 
-To set the application source directory explicitly, give its path as a positional argument:
+We recommend setting the application source directory explicitly and giving its path as a positional argument:
 
-`west build -b <BOARD_ID> <path/to/the/source/directory>`
+`west build -b <BOARD_ID> <zephyr_applications/applications/...>`
 
 
 For further information related to building the application, see [this section](https://docs.zephyrproject.org/latest/develop/west/build-flash-debug.html#building-west-build) for more details.

@@ -1,0 +1,6 @@
+# Copyright 2023 Google LLC
+# SPDX-License-Identifier: Apache-2.0
+
+if INPUT
+rsource "Kconfig.resistive_touch_4wire"
+endif # INPUT

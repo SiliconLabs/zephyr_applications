@@ -1,0 +1,206 @@
+#include <silabs/gpio_gecko.h>
+#include <zephyr/dt-bindings/input/input-resistive-touchscreen-4wire.h>
+#include <zephyr/dt-bindings/display/ili9xxx.h>
+
+/ {
+	chosen {
+		zephyr,display = &adafruit_2_4_tft_touch_v2_ili9341;
+		sw0 = &button0;
+	};
+	
+	aliases {
+		touchscreen = &resistive_touch;
+	};
+ 
+	adafruit_2_4_tft_mipi_dbi {
+		compatible = "zephyr,mipi-dbi-spi";
+		spi-dev = <&usart0>;
+		#address-cells = <1>;
+		#size-cells = <0>;
+		status = "okay";
+		dc-gpios = <&gpioa 6 GPIO_ACTIVE_HIGH>;
+		write-only;
+		adafruit_2_4_tft_touch_v2_ili9341: ili9341@1 {
+			compatible = "ilitek,ili9341";
+			mipi-max-frequency = <15151515>;
+			reg = <1>;
+			height = <240>;
+			width = <320>;
+			pixel-format = <ILI9XXX_PIXEL_FORMAT_RGB565>;
+			// display-inversion;
+			rotation = <90>;
+			// mipi-hold-cs;
+			pwctrla = [39 2C 00 34 02];
+			pwctrlb = [00 C1 30];
+			pwseqctrl = [64 03 12 81];
+			timctrla = [85 00 78];
+			timctrlb = [00 00];
+			pumpratioctrl = [20];
+			pwctrl1 = [23];
+			pwctrl2 = [10];
+			gamset = [01];
+			frmctr1 = [00 18];
+			disctrl = [08 82 27 04];
+			vmctrl1 = [3e 28];
+			vmctrl2 = [86];
+			pgamctrl = [0f 31 2b 0c 0e 08 4e f1 37 07 10 03 0e 09 00];
+			ngamctrl = [00 0e 14 03 11 07 31 c1 48 08 0f 0c 31 36 0f];
+			status = "okay";
+		};
+	};
+
+	lvgl_pointer {
+		compatible = "zephyr,lvgl-pointer-input";
+		input = <&resistive_touch>;
+		// swap-xy;
+		// invert-x;
+		// invert-y;
+	};
+};
+
+&adc0 {
+	status = "okay";
+	#address-cells = <1>;
+	#size-cells = <0>;
+
+	channel@0 {
+		reg = <0>;
+		zephyr,gain = "ADC_GAIN_1";
+		zephyr,reference = "ADC_REF_VDD_1";
+		zephyr,acquisition-time = <ADC_ACQ_TIME_DEFAULT>;
+		zephyr,resolution = <12>;
+		zephyr,input-positive = <(((1 + 8) << 4) | 2)>; // XM = PB2
+	};
+
+	channel@1 {
+		reg = <1>;
+		zephyr,gain = "ADC_GAIN_1";
+		zephyr,reference = "ADC_REF_VDD_1";
+		zephyr,acquisition-time = <ADC_ACQ_TIME_DEFAULT>;
+		zephyr,resolution = <12>;
+		zephyr,input-positive = <(((3 + 8) << 4) | 2)>; // XP = PD2
+	};
+
+	channel@2 {
+		reg = <2>;
+		zephyr,gain = "ADC_GAIN_1";
+		zephyr,reference = "ADC_REF_VDD_1";
+		zephyr,acquisition-time = <ADC_ACQ_TIME_DEFAULT>;
+		zephyr,resolution = <12>;
+		zephyr,input-positive = <(((1 + 8) << 4) | 3)>; // YM = PB3
+	};
+
+	channel@3 {
+		reg = <3>;
+		zephyr,gain = "ADC_GAIN_1";
+		zephyr,reference = "ADC_REF_VDD_1";
+		zephyr,acquisition-time = <ADC_ACQ_TIME_DEFAULT>;
+		zephyr,resolution = <12>;
+		zephyr,input-positive = <(((1 + 8) << 4) | 0)>; // YP = PB0
+	};
+
+	resistive_touch: resistive_touch {
+		compatible = "resistive-touchscreen-4wire";
+		poll-period-ms = <15>;
+		h-res = <240>;
+		v-res = <320>;
+		x-min = <440>;
+		x-max = <3340>;
+		y-min = <330>;
+		y-max = <3360>;
+		r-xplate = <200>;
+		r-touch-threshold = "600.0";
+		XM {
+			io-channels = <&adc0 0>;
+			zephyr,wire = <INPUT_4WIRE_TS_XM>;
+			control-gpios = <&gpiob 2 GPIO_ACTIVE_HIGH>;
+		};
+
+		XP {
+			io-channels = <&adc0 1>;
+			zephyr,wire = <INPUT_4WIRE_TS_XP>;
+			control-gpios = <&gpiod 2 GPIO_ACTIVE_HIGH>;
+		};
+
+		YM {
+			io-channels = <&adc0 2>;
+			zephyr,wire = <INPUT_4WIRE_TS_YM>;
+			control-gpios = <&gpiob 3 GPIO_ACTIVE_HIGH>;
+		};
+
+		YP {
+			io-channels = <&adc0 3>;
+			zephyr,wire = <INPUT_4WIRE_TS_YP>;
+			control-gpios = <&gpiob 0 GPIO_ACTIVE_HIGH>;
+		};
+  };
+};
+
+&usart0 {
+  /delete-property/ current-speed;
+  /delete-property/ peripheral-id;
+  compatible = "silabs,gecko-spi-usart";
+  reg = <0x5005C000 0x400>;
+  #address-cells = <1>;
+  #size-cells = <0>;
+  interrupts = <16 0>, <17 0>;
+	status = "okay";
+	cs-gpios = <&gpioa 7 GPIO_ACTIVE_LOW>, <&gpioa 5 GPIO_ACTIVE_LOW>;
+
+	icm20689@0 {
+		compatible = "invensense,icm20689";
+		spi-max-frequency = <2400000>;
+		reg = <0>;
+		int-gpios = <&gpiob 1 GPIO_ACTIVE_HIGH>;
+		accel-bw = <1046>;
+		accel-fs = <2>;
+		gyro-bw = <41>;
+		gyro-fs = <250>;
+		status = "okay";
+	};
+
+};
+
+&pinctrl {
+	/* configuration for usart0 device, operating as SPI */
+	usart0_default: usart0_default {
+		group1 {
+			psels = <GECKO_PSEL(SPI_SCK, C, 1)>,
+				<GECKO_PSEL(SPI_MOSI, C, 3)>,
+				<GECKO_PSEL(SPI_MISO, C, 2)>;
+		};
+	};
+};
+
+&i2c0 {
+	status = "okay";
+
+	veml6035: veml6035@29 {
+		compatible = "vishay,veml7700";
+		reg = <0x29>;
+		status = "okay";
+	};
+
+	si7210: si7210@30 {
+		compatible = "silabs,si7210";
+		reg = <0x30>;
+		status = "okay";
+	};
+
+	si7021: si7021@40 {
+		compatible = "silabs,si7006";
+		reg = <0x40>;
+		status = "okay";
+	};
+	bmp384: bmp384@77 {
+		compatible = "bosch,bmp384";
+		reg = <0x77>;
+		status = "okay";
+	};
+};
+
+&sensor_enable {
+	startup-delay-us = <100000>;
+	status = "okay";
+};
+

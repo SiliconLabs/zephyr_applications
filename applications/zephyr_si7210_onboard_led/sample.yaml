@@ -1,0 +1,9 @@
+sample:
+  description: The example also demonstrate the utilization of the built-in Si7210 Hall Effect Magnetic sensor 
+    and an onboard led with Zephyr OS.
+  name: Zephyr - Si7210 Hall Effect Magnetic Sensor
+
+tests:
+  sample.basic.za_si7210_onboard_led:
+    platform_allow : efr32bg22_brd4184a, efr32xg24_dk2601b, efr32bg27_brd2602a
+    tags: experimental

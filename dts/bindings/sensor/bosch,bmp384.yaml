@@ -1,0 +1,9 @@
+# Copyright (c) 2022 Esco Medical ApS
+# Copyright (c) 2020 TDK Invensense
+# SPDX-License-Identifier: Apache-2.0
+
+description: Pressure Sensor BMP384
+
+compatible: "bosch,bmp384"
+
+include: [sensor-device.yaml, i2c-device.yaml]

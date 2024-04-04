@@ -1,7 +1,0 @@
-sample:
-  description: This example demonstrates the utilization of the MikroBUS connector with the Silabs EFR32BG22 Thunderboard Kit on Zephyr OS.
-  name: zephyr_mikrobus_demo
-
-tests:
-  sample.basic.zephyr_mikrobus_demo:
-    tags: experimental

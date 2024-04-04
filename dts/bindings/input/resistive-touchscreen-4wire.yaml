@@ -1,0 +1,106 @@
+# Copyright 2023 Google LLC
+# SPDX-License-Identifier: Apache-2.0
+
+description: |
+  ADC based analog axis input device
+
+  Implement an input device generating absolute axis events by periodically
+  reading from some ADC channels.
+
+  Example configuration:
+
+  #include <zephyr/dt-bindings/input/input-event-codes.h>
+
+  resistive_touch {
+          compatible = "resistive-touch";
+          poll-period-ms = <15>;
+          axis-x {
+                  io-channels = <&adc 0>;
+                  out-deadzone = <8>;
+                  in-min = <100>;
+                  in-max = <800>;
+                  zephyr,axis = <INPUT_ABS_X>;
+          };
+  };
+
+compatible: "resistive-touchscreen-4wire"
+
+include: base.yaml
+
+properties:
+  poll-period-ms:
+    type: int
+    default: 15
+    description: |
+      How often to get new ADC samples for the various configured axes in
+      milliseconds. Defaults to 15ms if unspecified.
+
+  h-res:
+    type: int
+    default: 320
+    description: |
+      Horizontal resolution.
+
+  v-res:
+    type: int
+    default: 240
+    description: |
+      Vertical resolution.
+
+  x-min:
+      type: int
+      required: true
+      description: |
+        Input value that corresponds to the minimum x value.
+
+  x-max:
+      type: int
+      required: true
+      description: |
+        Input value that corresponds to the maximum x value.axmaximum
+
+  y-min:
+      type: int
+      required: true
+      description: |
+        Input value that corresponds to the minimum y value.
+
+  y-max:
+      type: int
+      required: true
+      description: |
+        Input value that corresponds to the maximum y value.
+
+  r-xplate:
+      type: int
+      required: true
+      description: |
+        X plate resistance.
+
+  r-touch-threshold:
+      type: string
+      required: true
+      description: |
+        Input value that corresponds to the resistance threshold of xy plate.
+
+
+child-binding:
+  properties:
+    io-channels:
+      type: phandle-array
+      required: true
+      description: |
+        ADC IO channel to use.
+
+    zephyr,wire:
+      type: int
+      required: true
+      description: |
+        The input wire of touch screen, typically any of
+        INPUT_4WIRE_TS_*.
+
+    control-gpios:
+      type: phandle-array
+      required: true
+      description: |
+        The GPIO for touch point measurement

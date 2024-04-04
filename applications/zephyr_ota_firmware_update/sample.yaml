@@ -1,0 +1,7 @@
+sample:
+  description: The vision of this project is to provide developers with clear examples of OTA firmware updates over Bluetooth Low Energy (BLE) with the Zephyr OS on various Silicon Labs development kits.
+  name: zephyr_ota_firmware_update
+
+tests:
+  sample.basic.zephyr_ota_firmware_update:
+    tags: experimental
