@@ -1,4 +1,4 @@
-# Copyright (c) 2022, Silicon Labs
+# Copyright (c) 2025 Silicon Laboratories Inc. www.silabs.com
 # SPDX-License-Identifier: Apache-2.0
 
 mainmenu "Si7210: Magnetic Threshold Configuration"

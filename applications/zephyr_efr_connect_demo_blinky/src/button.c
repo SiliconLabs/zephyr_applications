@@ -3,7 +3,7 @@
  * @brief zephyr button source file.
  *******************************************************************************
  * # License
- * <b>Copyright 2022 Silicon Laboratories Inc. www.silabs.com</b>
+ * <b>Copyright 2025 Silicon Laboratories Inc. www.silabs.com</b>
  *******************************************************************************
  *
  * SPDX-License-Identifier: Zlib
@@ -43,8 +43,8 @@ LOG_MODULE_REGISTER(button);
 static struct gpio_callback gpio_cb;
 
 /**************************************************************************//**
-*  Button initialization.
-******************************************************************************/
+ *  Button initialization.
+ ******************************************************************************/
 int button_init(gpio_callback_handler_t handler, struct gpio_dt_spec button)
 {
   int ret;

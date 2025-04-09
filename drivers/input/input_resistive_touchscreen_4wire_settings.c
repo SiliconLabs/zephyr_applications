@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Google LLC
+ * Copyright (c) 2025 Silicon Laboratories Inc. www.silabs.com
  *
  * SPDX-License-Identifier: Apache-2.0
  */

@@ -3,7 +3,7 @@
  * @brief zephyr led source file.
  *******************************************************************************
  * # License
- * <b>Copyright 2022 Silicon Laboratories Inc. www.silabs.com</b>
+ * <b>Copyright 2025 Silicon Laboratories Inc. www.silabs.com</b>
  *******************************************************************************
  *
  * SPDX-License-Identifier: Zlib
@@ -40,8 +40,8 @@ LOG_MODULE_REGISTER(led);
 static const struct gpio_dt_spec led = GPIO_DT_SPEC_GET(DT_ALIAS(led0), gpios);
 
 /**************************************************************************//**
-*  LED initialization.
-******************************************************************************/
+ *  LED initialization.
+ ******************************************************************************/
 int led_init(void)
 {
   int ret;
@@ -62,8 +62,8 @@ int led_init(void)
 }
 
 /**************************************************************************//**
-*  LED initialization.
-******************************************************************************/
+ *  LED initialization.
+ ******************************************************************************/
 int led_control(uint8_t led_state)
 {
   LOG_INF("Turn %s LED", led_state ? "on" : "off");

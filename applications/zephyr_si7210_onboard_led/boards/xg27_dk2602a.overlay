@@ -1,0 +1,7 @@
+&i2c0 {
+	si7210: si7210@30 {
+		compatible = "silabs,si7210";
+		status = "okay";
+		reg = <0x30>;
+	};
+};

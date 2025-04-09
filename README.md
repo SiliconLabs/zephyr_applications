@@ -13,7 +13,7 @@
 
 # Silicon Labs Zephyr Applications #
 
-[![Version Badge](https://img.shields.io/badge/-v1.2.0-green)](https://github.com/SiliconLabs/zephyr_applications/releases)
+[![Version Badge](https://img.shields.io/badge/-v2.0.0-green)](https://github.com/SiliconLabs/zephyr_applications/releases)
 ![License badge](https://img.shields.io/badge/License-Zlib-green)
 
 This repository contains example projects that demonstrate various applications running on Zephyr OS supported on Silicon Labs Development Kits.
@@ -26,127 +26,95 @@ All examples in this repository are considered to be EXPERIMENTAL QUALITY, which
 |  1 |Zephyr - MikroBus Demo | [Click Here](./applications/zephyr_mikrobus_demo/)|
 |  2 |Zephyr - Si7210 Hall Effect Magnetic Sensor | [Click Here](./applications/zephyr_si7210_onboard_led/)|
 |  3 |Zephyr - Qwiic Connector | [Click Here](./applications/zephyr_qwiic_connector/)|
-|  4 |Zephyr - EFR Connect Demo - Blinky | [Click Here](./applications/zephyr_efr_connect_demo_blinky/)|
+|  4 |Zephyr - Simplicity Connect Demo - Blinky | [Click Here](./applications/zephyr_efr_connect_demo_blinky/)|
 |  5 |Zephyr - Modified SoC Thermometer | [Click Here](./applications/zephyr_modified_soc_thermometer/)|
-|  6 |Zephyr - OTA Firmware Update over BLE | [Click Here](./applications/zephyr_ota_firmware_update/)|
-|  7 |Zephyr - SoC Throughput | [Click Here](./applications/zephyr_soc_throughput/)|
-|  8 |Zephyr - BTHome v2 - xG24/xG27 Dev Kit Sensors with LVGL | [Click Here](./applications/zephyr_bthome_v2/)|
-
+|  6 |Zephyr - SoC Throughput | [Click Here](./applications/zephyr_soc_throughput/)|
+|  7 |Zephyr - BTHome v2 - xG24/xG27 Dev Kit Sensors with LVGL | [Click Here](./applications/zephyr_bthome_v2/)|
 
 ## Setting up environment ##
 
-For setting up the Zephyr environment, please follow some steps below:
+Follow the getting started guide here: [Zephyr Getting Started Guide](https://docs.zephyrproject.org/latest/develop/getting_started/index.html) with 2 sections:
 
-- Select and update OS.
+1. [Select and Update OS](https://docs.zephyrproject.org/latest/develop/getting_started/index.html#select-and-update-os)
 
-- Install some host dependencies using your package manager.
+2. [Install dependencies](https://docs.zephyrproject.org/latest/develop/getting_started/index.html#install-dependencies)
+
+  The current minimum required version for the main dependencies are:
 
   | Tool | Min. Version |
   |:--:|:---------------:|
   |  [Cmake](https://cmake.org/) | 3.20.5 |
-  |  [Python](https://www.python.org/) | 3.8 |
+  |  [Python](https://www.python.org/) | 3.10 |
   |  [Devicetree complier](https://www.devicetree.org/) | 1.4.6 |
 
-- Create a virtual environment and activate that environment.
+## Setting up the workspace ##
 
-  - For Windows:
-    - `python -m venv zephyrproject\.venv`
-    - `zephyrproject\.venv\Scripts\activate.bat`
-  
-  - For Ubuntu:
-    -  `python3 -m venv ~/zephyrproject/.venv`
-    -  `source ~/zephyrproject/.venv/bin/activate`
+The application structure is based on the [Zephyr example application](https://github.com/zephyrproject-rtos/example-application). Follow steps below to setup and build
 
-  - For MacOS:
-    -  `python3 -m venv ~/zephyrproject/.venv`
-    -  `source ~/zephyrproject/.venv/bin/activate`
+1. Create a python virtual environment and activate that environment.
 
-- Install **west**.
+    - For Windows:
+      - To create a python virtual environment on windows, run the following commands by using Batchfile or Powershell
 
-  `pip install west`
+        | Command | Batchfile | Powershell |
+        | --- | --- | --- |
+        | Goto user home directory | `cd %HOMEPATH%` | `cd $Env:HOMEPATH` |
+        | Create virtual environment | `python -m venv zephyrproject\.venv` |  `python -m venv zephyrproject\.venv` |
+        | Active virtual environment | `zephyrproject\.venv\Scripts\activate.bat` | `zephyrproject\.venv\Scripts\activate.ps1` |
 
-- Clone the Zephyr applications repository of Silicon Labs.
+    - For Ubuntu:
+      - `python3 -m venv ~/zephyrproject/.venv`
+      - `source ~/zephyrproject/.venv/bin/activate`
 
-  `cd zephyrproject`
+    - For MacOS:
+      - `python3 -m venv ~/zephyrproject/.venv`
+      - `source ~/zephyrproject/.venv/bin/activate`
 
-  `git clone https://github.com/SiliconLabs/zephyr_applications.git`
+2. Install **west**.
 
-- Initialize the workspace by running the following commands.
+   `pip install west`
 
-  `west init -l zephyr_applications`
+3. Install the Zephyr SDK: Follow the guide here to install Zephyr SDK: https://docs.zephyrproject.org/latest/develop/getting_started/index.html#install-the-zephyr-sdk
 
-  `west update`
+4. Clone the Zephyr applications repository of Silicon Labs.
 
-- Install additional Python dependencies.
+   `cd zephyrproject`
 
-  `pip install -r zephyr/scripts/requirements.txt`
+   `git clone https://github.com/SiliconLabs/zephyr_applications.git`
 
-- Fetch and store the Silicon Labs pre-built libraries
+5. Initialize the workspace by running the following commands.
 
-  `west blobs fetch silabs`
+   `west init -l zephyr_applications`
 
-- Install the Zephyr SDK.
+   `west update`
 
-  - Download and verify the [Zephyr SDK bundle](https://github.com/zephyrproject-rtos/sdk-ng/releases/tag/v0.16.5-1).
+6. Install additional Python dependencies.
 
-  - Extract the Zephyr SDK bundle archive.
+   `pip install -r zephyr/scripts/requirements.txt`
 
-  - Run the Zephyr SDK bundle setup script.
+7. Fetch and store the Silicon Labs pre-built libraries
 
-  - For Windows:
+   `west blobs fetch hal_silabs`
 
-      - Open a cmd.exe terminal window as a **regular user** and then run the commands below:
-        ```
-        cd %HOMEPATH%
-        wget https://github.com/zephyrproject-rtos/sdk-ng/releases/download/v0.16.5-1/zephyr-sdk-0.16.5-1_windows-x86_64.7z
-        ```
-        ```
-        7z x zephyr-sdk-0.16.5-1_windows-x86_64.7z
-        ```
-        ```
-        cd zephyr-sdk-0.16.5-1
-        setup.cmd
-        ```
+8. Build & running the example application
 
-  - For Ubuntu:
-      - Open a terminal and run the following commands:
-        ```
-        cd ~
-        wget https://github.com/zephyrproject-rtos/sdk-ng/releases/download/v0.16.5-1/zephyr-sdk-0.16.5-1_linux-x86_64.tar.xz
-        wget -O - https://github.com/zephyrproject-rtos/sdk-ng/releases/download/v0.16.5-1/sha256.sum | shasum --check --ignore-missing
-        ```
-        ```
-        tar xvf zephyr-sdk-0.16.5-1_linux-x86_64.tar.xz
-        ```
-        ```
-        cd zephyr-sdk-0.16.5-1
-        setup.sh
-        ```
-      - Install [udev](https://en.wikipedia.org/wiki/Udev) rules, which allow you to flash most Zephyr boards as a regular user.
-        - `sudo cp ~/zephyr-sdk-0.16.5-1/sysroots/x86_64-pokysdk-linux/usr/share/openocd/contrib/60-openocd.rules /etc/udev/rules.d`
-        - `sudo udevadm control --reload`
+   The example applications is located at `applications` folder. Use west command to build and flash to the board.
 
-  - For macOS:
-      - Open a terminal and run the following commands:
-        ```
-        cd ~
-        curl -L -O https://github.com/zephyrproject-rtos/sdk-ng/releases/download/v0.16.5-1/zephyr-sdk-0.16.5-1_macos-x86_64.tar.xz
-        curl -L https://github.com/zephyrproject-rtos/sdk-ng/releases/download/v0.16.5-1/sha256.sum | shasum --check --ignore-missing
-        ```
-        ```
-        tar xvf zephyr-sdk-0.16.5-1_macos-x86_64.tar.xz
-        ```
-        ```
-        cd zephyr-sdk-0.16.5-1
-        ./setup.sh
-        ```
+   Build:
+
+   > `west build -p -b <board_id> <application_path>`
+
+   Flash:
+
+   > `west flash`
 
 **Note:**
 
+- Refer to the example application documentation (the README file) to get more details on how to build and run each example applications.
+
 - For more information regarding setting up the environment, please refer to [this guide](https://docs.zephyrproject.org/latest/develop/getting_started/index.html) on Zephyr's homepage.
 
-- We would advise using the Python version between 3.8 and 3.10.
-
+- We would advise using the Python version 3.10.
 
 ## How to make your own application ##
 
@@ -167,6 +135,7 @@ The typical example outline as below:
   +--prj.config                   > This is a Kconfig fragment that specifies application-specific values for one or more Kconfig options.
   +--README.md                   > Readme file of the project.
 ```
+
 If you want to develop your project, you should focus on some files that specify your projects, like the devicetree overlay file, CmakeLists.txt, Kconfig, and prj.conf.
 
 ### Build the application ###
@@ -181,9 +150,7 @@ We recommend setting the application source directory explicitly and giving its 
 
 `west build -b <BOARD_ID> <zephyr_applications/applications/...>`
 
-
 For further information related to building the application, see [this section](https://docs.zephyrproject.org/latest/develop/west/build-flash-debug.html#building-west-build) for more details.
-
 
 ### Flash the application ###
 

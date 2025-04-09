@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Google LLC
+ * Copyright (c) 2025 Silicon Laboratories Inc. www.silabs.com
  *
  * SPDX-License-Identifier: Apache-2.0
  */
@@ -17,39 +17,39 @@
 #include <zephyr/logging/log.h>
 #include <zephyr/sys/util.h>
 
-LOG_MODULE_REGISTER(resistive_touchscreen_4wire, CONFIG_INPUT_LOG_LEVEL);
+LOG_MODULE_REGISTER(resistive_touchscreen_4wire, 3);
 #define NUMSAMPLES  6
 
-struct resistive_touchscreen_4wire_channel_config {
+struct adc_channel_config {
   struct adc_dt_spec adc;
   int16_t out_min;
   int16_t out_max;
   uint16_t wire;
-  struct gpio_dt_spec gpio;
   bool invert;
 };
 
-struct resistive_touchscreen_4wire_channel_data {
+struct adc_channel_data {
   int last_out;
 };
 
-struct resistive_touchscreen_4wire_config {
+struct touchscreen_config {
   uint32_t poll_period_ms;
   uint32_t h_res;
   uint32_t v_res;
-  uint16_t x_min;
-  uint16_t x_max;
-  uint16_t y_min;
-  uint16_t y_max;
   uint16_t r_xplate;
   float r_touch_thres;
-  const struct resistive_touchscreen_4wire_channel_config *channel_cfg;
-  struct resistive_touchscreen_4wire_channel_data *channel_data;
+  bool xy_swap;
+  struct gpio_dt_spec xm_pin;
+  struct gpio_dt_spec xp_pin;
+  struct gpio_dt_spec ym_pin;
+  struct gpio_dt_spec yp_pin;
+  const struct adc_channel_config *channel_cfg;
+  struct adc_channel_data *channel_data;
   struct resistive_touchscreen_4wire_calibration *calibration;
   const uint8_t num_channels;
 };
 
-struct resistive_touchscreen_4wire_data {
+struct touchscreen_data {
   struct k_mutex cal_lock;
   resistive_touchscreen_4wire_raw_data_t raw_data_cb;
   struct k_timer timer;
@@ -60,16 +60,14 @@ struct resistive_touchscreen_4wire_data {
   bool pressed_old;
 };
 
-struct resistive_touchscreen_4wire {
-  const struct resistive_touchscreen_4wire_channel_config *xm_cfg;
-  const struct resistive_touchscreen_4wire_channel_config *xp_cfg;
-  const struct resistive_touchscreen_4wire_channel_config *ym_cfg;
-  const struct resistive_touchscreen_4wire_channel_config *yp_cfg;
+struct touchscreen_adc_channels {
+  const struct adc_channel_config *xm_cfg;
+  const struct adc_channel_config *yp_cfg;
 };
 
 int resistive_touchscreen_4wire_num_axes(const struct device *dev)
 {
-  const struct resistive_touchscreen_4wire_config *cfg = dev->config;
+  const struct touchscreen_config *cfg = dev->config;
 
   return cfg->num_channels;
 }
@@ -77,8 +75,8 @@ int resistive_touchscreen_4wire_num_axes(const struct device *dev)
 int resistive_touchscreen_4wire_calibration_get(const struct device *dev,
                                                 struct resistive_touchscreen_4wire_calibration *out_cal)
 {
-  const struct resistive_touchscreen_4wire_config *cfg = dev->config;
-  struct resistive_touchscreen_4wire_data *data = dev->data;
+  const struct touchscreen_config *cfg = dev->config;
+  struct touchscreen_data *data = dev->data;
   struct resistive_touchscreen_4wire_calibration *cal = cfg->calibration;
 
   k_mutex_lock(&data->cal_lock, K_FOREVER);
@@ -91,7 +89,7 @@ int resistive_touchscreen_4wire_calibration_get(const struct device *dev,
 void resistive_touchscreen_4wire_set_raw_data_cb(const struct device *dev,
                                                  resistive_touchscreen_4wire_raw_data_t cb)
 {
-  struct resistive_touchscreen_4wire_data *data = dev->data;
+  struct touchscreen_data *data = dev->data;
 
   k_mutex_lock(&data->cal_lock, K_FOREVER);
   data->raw_data_cb = cb;
@@ -101,8 +99,8 @@ void resistive_touchscreen_4wire_set_raw_data_cb(const struct device *dev,
 int resistive_touchscreen_4wire_calibration_set(const struct device *dev,
                                                 struct resistive_touchscreen_4wire_calibration *new_cal)
 {
-  const struct resistive_touchscreen_4wire_config *cfg = dev->config;
-  struct resistive_touchscreen_4wire_data *data = dev->data;
+  const struct touchscreen_config *cfg = dev->config;
+  struct touchscreen_data *data = dev->data;
   struct resistive_touchscreen_4wire_calibration *cal = cfg->calibration;
 
   k_mutex_lock(&data->cal_lock, K_FOREVER);
@@ -127,7 +125,7 @@ static void insert_sort(int16_t *array, uint8_t size)
 }
 
 static int adc_read_one_channel(const struct device *dev,
-                                const struct resistive_touchscreen_4wire_channel_config *channel_cfg,
+                                const struct adc_channel_config *channel_cfg,
                                 int32_t *out)
 {
   uint16_t bufs[NUMSAMPLES];
@@ -156,7 +154,7 @@ static int adc_read_one_channel(const struct device *dev,
 
   sequence.options = &options;
   // sequence.channels |= BIT(channel_cfg->adc.channel_id);
-  err = adc_read(channel_cfg->adc.dev, &sequence);
+  err = adc_read_dt(&channel_cfg->adc, &sequence);
   if (err < 0) {
     LOG_ERR("Could not read (%d)", err);
     return -1;
@@ -167,63 +165,63 @@ static int adc_read_one_channel(const struct device *dev,
 }
 
 static void resistive_touchscreen_4wire_loop(const struct device *dev,
-                                             struct resistive_touchscreen_4wire *rt)
+                                             struct touchscreen_adc_channels *tac)
 {
-  const struct resistive_touchscreen_4wire_config *cfg = dev->config;
-  struct resistive_touchscreen_4wire_data *data = dev->data;
+  const struct touchscreen_config *cfg = dev->config;
+  struct touchscreen_data *data = dev->data;
   int err;
   int32_t raw_x, raw_y, raw_z1, raw_z2;
   int32_t x, y;
   bool pressed = false;
   float r_touch;
 
-  if (!gpio_is_ready_dt(&rt->xm_cfg->gpio)
-      || !gpio_is_ready_dt(&rt->xp_cfg->gpio)
-      || !gpio_is_ready_dt(&rt->ym_cfg->gpio)
-      || !gpio_is_ready_dt(&rt->yp_cfg->gpio)) {
+  if (!gpio_is_ready_dt(&cfg->xm_pin)
+      || !gpio_is_ready_dt(&cfg->xp_pin)
+      || !gpio_is_ready_dt(&cfg->ym_pin)
+      || !gpio_is_ready_dt(&cfg->yp_pin)) {
     LOG_ERR("gpio not ready");
     return;
   }
 
   // XM = 0, XP = 1, YM = Hi-z & YP as input
-  gpio_pin_configure_dt(&rt->xm_cfg->gpio, GPIO_OUTPUT_INACTIVE);
-  gpio_pin_configure_dt(&rt->xp_cfg->gpio, GPIO_OUTPUT_ACTIVE);
-  gpio_pin_configure_dt(&rt->ym_cfg->gpio, GPIO_INPUT);
-  gpio_pin_configure_dt(&rt->yp_cfg->gpio, GPIO_INPUT);
+  gpio_pin_configure_dt(&cfg->xm_pin, GPIO_OUTPUT_INACTIVE);
+  gpio_pin_configure_dt(&cfg->xp_pin, GPIO_OUTPUT_ACTIVE);
+  gpio_pin_configure_dt(&cfg->ym_pin, GPIO_INPUT);
+  gpio_pin_configure_dt(&cfg->yp_pin, GPIO_INPUT);
   // k_usleep(20);
-  err = adc_read_one_channel(dev, rt->yp_cfg, &raw_x);
-  raw_x = 4096 - (raw_x & 0xfff);
-  if (err < 0) {
+  err = adc_read_one_channel(dev, tac->yp_cfg, &raw_x);
+  if ((err < 0) || (raw_x > 4095)) {
     LOG_ERR("Could not read x-axis (%d)", err);
     return;
   }
+  raw_x = 4096 - raw_x;
 
   // YM = 0, YP = 1, XP = Hi-z & XM as input
-  gpio_pin_configure_dt(&rt->xm_cfg->gpio, GPIO_INPUT);
-  gpio_pin_configure_dt(&rt->xp_cfg->gpio, GPIO_INPUT);
-  gpio_pin_configure_dt(&rt->ym_cfg->gpio, GPIO_OUTPUT_INACTIVE);
-  gpio_pin_configure_dt(&rt->yp_cfg->gpio, GPIO_OUTPUT_ACTIVE);
+  gpio_pin_configure_dt(&cfg->xm_pin, GPIO_INPUT);
+  gpio_pin_configure_dt(&cfg->xp_pin, GPIO_INPUT);
+  gpio_pin_configure_dt(&cfg->ym_pin, GPIO_OUTPUT_INACTIVE);
+  gpio_pin_configure_dt(&cfg->yp_pin, GPIO_OUTPUT_ACTIVE);
   // k_usleep(20);
-  err = adc_read_one_channel(dev, rt->xm_cfg, &raw_y);
-  raw_y = 4096 - (raw_y & 0xfff);
-  if (err < 0) {
+  err = adc_read_one_channel(dev, tac->xm_cfg, &raw_y);
+  if ((err < 0) || (raw_y > 4095)) {
     LOG_ERR("Could not read y-axis (%d)", err);
     return;
   }
+  raw_y = 4096 - raw_y;
 
   // XP = 0, YM = 1, XM = Hi-z & YP as input
-  gpio_pin_configure_dt(&rt->xm_cfg->gpio, GPIO_INPUT);
-  gpio_pin_configure_dt(&rt->xp_cfg->gpio, GPIO_OUTPUT_INACTIVE);
-  gpio_pin_configure_dt(&rt->ym_cfg->gpio, GPIO_OUTPUT_ACTIVE);
-  gpio_pin_configure_dt(&rt->yp_cfg->gpio, GPIO_INPUT);
+  gpio_pin_configure_dt(&cfg->xm_pin, GPIO_INPUT);
+  gpio_pin_configure_dt(&cfg->xp_pin, GPIO_OUTPUT_INACTIVE);
+  gpio_pin_configure_dt(&cfg->ym_pin, GPIO_OUTPUT_ACTIVE);
+  gpio_pin_configure_dt(&cfg->yp_pin, GPIO_INPUT);
   // k_usleep(20);
-  err = adc_read_one_channel(dev, rt->xm_cfg, &raw_z1);
-  if (err < 0) {
+  err = adc_read_one_channel(dev, tac->xm_cfg, &raw_z1);
+  if ((err < 0) || (raw_z1 > 4095)) {
     LOG_ERR("Could not read z1-axis (%d)", err);
     return;
   }
-  err = adc_read_one_channel(dev, rt->yp_cfg, &raw_z2);
-  if (err < 0) {
+  err = adc_read_one_channel(dev, tac->yp_cfg, &raw_z2);
+  if ((err < 0) || (raw_z2 > 4095)) {
     LOG_ERR("Could not read z2-axis (%d)", err);
     return;
   }
@@ -245,17 +243,36 @@ static void resistive_touchscreen_4wire_loop(const struct device *dev,
     data->raw_data_cb(dev, raw_x, raw_y, r_touch);
   }
 
+  if (cfg->xy_swap) {
+    int32_t temp = raw_x;
+
+    raw_x = raw_y;
+    raw_y = temp;
+  }
+
   if (r_touch < cfg->calibration->r_touch_thres) {
     pressed = true;
 
     k_mutex_lock(&data->cal_lock, K_FOREVER);
 
+    if (raw_x > cfg->calibration->x_min) {
+      raw_x -= cfg->calibration->x_min;
+    } else {
+      raw_x = 0;
+    }
+
+    if (raw_y > cfg->calibration->y_min) {
+      raw_y -= cfg->calibration->y_min;
+    } else {
+      raw_y = 0;
+    }
+
     x =
-      CLAMP((raw_x - cfg->calibration->x_min) * cfg->h_res
+      CLAMP(raw_x * cfg->h_res
             / (cfg->calibration->x_max - cfg->calibration->x_min),
             0, cfg->h_res);
     y =
-      CLAMP((raw_y - cfg->calibration->y_min) * cfg->v_res
+      CLAMP(raw_y * cfg->v_res
             / (cfg->calibration->y_max - cfg->calibration->y_min),
             0, cfg->v_res);
 
@@ -286,14 +303,14 @@ static void resistive_touchscreen_4wire_thread(void *arg1,
                                                void *arg3)
 {
   const struct device *dev = arg1;
-  const struct resistive_touchscreen_4wire_config *cfg = dev->config;
-  struct resistive_touchscreen_4wire_data *data = dev->data;
-  struct resistive_touchscreen_4wire rt = { NULL, NULL, NULL, NULL };
+  const struct touchscreen_config *cfg = dev->config;
+  struct touchscreen_data *data = dev->data;
+  struct touchscreen_adc_channels tac = { NULL, NULL };
   int err;
   int i;
 
   for (i = 0; i < cfg->num_channels; i++) {
-    const struct resistive_touchscreen_4wire_channel_config *axis_cfg =
+    const struct adc_channel_config *axis_cfg =
       &cfg->channel_cfg[i];
 
     LOG_DBG("- %s, channel %d",
@@ -312,26 +329,22 @@ static void resistive_touchscreen_4wire_thread(void *arg1,
     }
 
     if (axis_cfg->wire == INPUT_4WIRE_TS_XM) {
-      rt.xm_cfg = axis_cfg;
-    } else if (axis_cfg->wire == INPUT_4WIRE_TS_XP) {
-      rt.xp_cfg = axis_cfg;
-    } else if (axis_cfg->wire == INPUT_4WIRE_TS_YM) {
-      rt.ym_cfg = axis_cfg;
+      tac.xm_cfg = axis_cfg;
     } else if (axis_cfg->wire == INPUT_4WIRE_TS_YP) {
-      rt.yp_cfg = axis_cfg;
+      tac.yp_cfg = axis_cfg;
     }
   }
 
-  __ASSERT(rt.xm_cfg
-           && rt.xp_cfg
-           && rt.ym_cfg
-           && rt.yp_cfg,
+  __ASSERT(tac.xm_cfg
+           && tac.xp_cfg
+           && tac.ym_cfg
+           && tac.yp_cfg,
            "Invalid config");
 
-  __ASSERT(rt.xm_cfg->gpio.port
-           && rt.xp_cfg->gpio.port
-           && rt.ym_cfg->gpio.port
-           && rt.yp_cfg->gpio.port,
+  __ASSERT(cfg->xm_pin.port
+           && cfg->xp_pin.port
+           && cfg->ym_pin.port
+           && cfg->yp_pin.port,
            "No gpio supplied");
 
   k_timer_init(&data->timer, NULL, NULL);
@@ -339,14 +352,14 @@ static void resistive_touchscreen_4wire_thread(void *arg1,
                 K_MSEC(cfg->poll_period_ms), K_MSEC(cfg->poll_period_ms));
 
   while (true) {
-    resistive_touchscreen_4wire_loop(dev, &rt);
+    resistive_touchscreen_4wire_loop(dev, &tac);
     k_timer_status_sync(&data->timer);
   }
 }
 
 static int resistive_touchscreen_4wire_init(const struct device *dev)
 {
-  struct resistive_touchscreen_4wire_data *data = dev->data;
+  struct touchscreen_data *data = dev->data;
   k_tid_t tid;
   k_mutex_init(&data->cal_lock);
   data->pressed_old = false;
@@ -372,22 +385,21 @@ static int resistive_touchscreen_4wire_init(const struct device *dev)
   return 0;
 }
 
-#define RESISTIVE_TOUCH_CHANNEL_CFG_DEF(node_id)      \
-  {                                                   \
-    .adc = ADC_DT_SPEC_GET(node_id),                  \
-    .wire = DT_PROP(node_id, zephyr_wire),            \
-    .gpio = GPIO_DT_SPEC_GET(node_id, control_gpios), \
+#define RESISTIVE_TOUCH_CHANNEL_CFG_DEF(node_id) \
+  {                                              \
+    .adc = ADC_DT_SPEC_GET(node_id),             \
+    .wire = DT_PROP(node_id, zephyr_wire),       \
   }
 
 #define RESISTIVE_TOUCH_INIT(inst)                                                             \
-  static const struct resistive_touchscreen_4wire_channel_config                               \
+  static const struct adc_channel_config                                                       \
   resistive_touchscreen_4wire_channel_cfg_ ## inst[] = {                                       \
     DT_INST_FOREACH_CHILD_STATUS_OKAY_SEP(inst,                                                \
                                           RESISTIVE_TOUCH_CHANNEL_CFG_DEF,                     \
                                           (, ))                                                \
   };                                                                                           \
                                                                                                \
-  static struct resistive_touchscreen_4wire_channel_data                                       \
+  static struct adc_channel_data                                                               \
   resistive_touchscreen_4wire_channel_data_ ## inst[ARRAY_SIZE(                                \
                                                       resistive_touchscreen_4wire_channel_cfg_ \
                                                       ## inst)];                               \
@@ -402,11 +414,16 @@ static int resistive_touchscreen_4wire_init(const struct device *dev)
     .r_touch_thres = DT_INST_STRING_UNQUOTED(inst, r_touch_threshold),                         \
   };                                                                                           \
                                                                                                \
-  static const struct resistive_touchscreen_4wire_config                                       \
+  static const struct touchscreen_config                                                       \
                       resistive_touchscreen_4wire_cfg_ ## inst = {                             \
     .poll_period_ms = DT_INST_PROP(inst, poll_period_ms),                                      \
     .h_res = DT_INST_PROP(inst, h_res),                                                        \
     .v_res = DT_INST_PROP(inst, v_res),                                                        \
+    .xy_swap = DT_INST_PROP_OR(inst, xy_swap, false),                                          \
+    .xm_pin = GPIO_DT_SPEC_GET(DT_DRV_INST(inst), xm_gpios),                                   \
+    .xp_pin = GPIO_DT_SPEC_GET(DT_DRV_INST(inst), xp_gpios),                                   \
+    .ym_pin = GPIO_DT_SPEC_GET(DT_DRV_INST(inst), ym_gpios),                                   \
+    .yp_pin = GPIO_DT_SPEC_GET(DT_DRV_INST(inst), yp_gpios),                                   \
     .channel_cfg = resistive_touchscreen_4wire_channel_cfg_ ## inst,                           \
     .channel_data = resistive_touchscreen_4wire_channel_data_ ## inst,                         \
     .calibration = &resistive_touchscreen_4wire_calibration ## inst,                           \
@@ -414,7 +431,7 @@ static int resistive_touchscreen_4wire_init(const struct device *dev)
       resistive_touchscreen_4wire_channel_cfg_ ## inst),                                       \
   };                                                                                           \
                                                                                                \
-  static struct resistive_touchscreen_4wire_data                                               \
+  static struct touchscreen_data                                                               \
   resistive_touchscreen_4wire_data_ ## inst;                                                   \
                                                                                                \
   DEVICE_DT_INST_DEFINE(inst,                                                                  \

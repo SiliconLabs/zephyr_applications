@@ -3,7 +3,7 @@
  * @brief zephyr application source file.
  *******************************************************************************
  * # License
- * <b>Copyright 2022 Silicon Laboratories Inc. www.silabs.com</b>
+ * <b>Copyright 2025 Silicon Laboratories Inc. www.silabs.com</b>
  *******************************************************************************
  *
  * SPDX-License-Identifier: Zlib
@@ -114,7 +114,7 @@ BT_GATT_SERVICE_DEFINE(blinky_example_svc,
                        BT_GATT_PRIMARY_SERVICE(&blinky_example_service_uuid),
                        BT_GATT_CHARACTERISTIC(&led_char_uuid.uuid,
                                               BT_GATT_CHRC_READ
-                                              | BT_GATT_CHRC_WRITE_WITHOUT_RESP,
+                                              | BT_GATT_CHRC_WRITE,
                                               BT_GATT_PERM_WRITE
                                               | BT_GATT_PERM_READ,
                                               app_ble_read_cb, app_ble_write_cb,
@@ -181,8 +181,8 @@ void app_process_action(void)
 // -----------------------------------------------------------------------------
 
 /**************************************************************************//**
-*  BLE initialization callback.
-******************************************************************************/
+ *  BLE initialization callback.
+ ******************************************************************************/
 static void bt_ready(int err)
 {
   if (err) {
@@ -192,7 +192,7 @@ static void bt_ready(int err)
   LOG_INF("Bluetooth initialized");
 
   /* Start advertising */
-  err = bt_le_adv_start(BT_LE_ADV_CONN, ad, ARRAY_SIZE(ad), NULL, 0);
+  err = bt_le_adv_start(BT_LE_ADV_CONN_FAST_2, ad, ARRAY_SIZE(ad), NULL, 0);
   if (err) {
     LOG_ERR("Advertising failed to start (err %d)", err);
     return;
@@ -202,8 +202,8 @@ static void bt_ready(int err)
 }
 
 /**************************************************************************//**
-*  BLE connected callback.
-******************************************************************************/
+ *  BLE connected callback.
+ ******************************************************************************/
 static void connected(struct bt_conn *connected, uint8_t err)
 {
   if (err) {
@@ -217,8 +217,8 @@ static void connected(struct bt_conn *connected, uint8_t err)
 }
 
 /**************************************************************************//**
-*  BLE disconnected callback.
-******************************************************************************/
+ *  BLE disconnected callback.
+ ******************************************************************************/
 static void disconnected(struct bt_conn *disconn, uint8_t reason)
 {
   if (ble_conn) {
@@ -230,8 +230,8 @@ static void disconnected(struct bt_conn *disconn, uint8_t reason)
 }
 
 /**************************************************************************//**
-*  BLE notification status change handler.
-******************************************************************************/
+ *  BLE notification status change handler.
+ ******************************************************************************/
 static void notification_status_handle(const struct bt_gatt_attr *attr,
                                        uint16_t value)
 {
@@ -241,8 +241,8 @@ static void notification_status_handle(const struct bt_gatt_attr *attr,
 }
 
 /**************************************************************************//**
-*  LED characteristic write callback.
-******************************************************************************/
+ *  LED characteristic write callback.
+ ******************************************************************************/
 static ssize_t app_ble_write_cb(struct bt_conn *conn,
                                 const struct bt_gatt_attr *attr,
                                 const void *buf,
@@ -259,8 +259,8 @@ static ssize_t app_ble_write_cb(struct bt_conn *conn,
 }
 
 /**************************************************************************//**
-*  LED characteristic read callback.
-******************************************************************************/
+ *  LED characteristic read callback.
+ ******************************************************************************/
 static ssize_t app_ble_read_cb(struct bt_conn *conn,
                                const struct bt_gatt_attr *attr,
                                void *buf, uint16_t len,
@@ -277,8 +277,8 @@ static ssize_t app_ble_read_cb(struct bt_conn *conn,
 }
 
 /**************************************************************************//**
-*  Button callback.
-******************************************************************************/
+ *  Button callback.
+ ******************************************************************************/
 static void button_callback(const struct device *gpiob,
                             struct gpio_callback *cb,
                             uint32_t pins)

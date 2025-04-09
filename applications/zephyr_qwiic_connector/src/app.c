@@ -3,7 +3,7 @@
  * @brief zephyr qwiic connector source file.
  *******************************************************************************
  * # License
- * <b>Copyright 2022 Silicon Laboratories Inc. www.silabs.com</b>
+ * <b>Copyright 2025 Silicon Laboratories Inc. www.silabs.com</b>
  *******************************************************************************
  *
  * SPDX-License-Identifier: Zlib
@@ -84,7 +84,7 @@ static void app_oled_update(float magnetic_value)
   cfb_draw_line(display, &line_up_start_pos, &line_up_end_pos);
 
   cfb_print(display, "Magnetic", 12, 14);
-  num_char = snprintf(temp, sizeof(temp), "%.2f mT", magnetic_value);
+  num_char = snprintf(temp, sizeof(temp), "%.2f mT", (double)magnetic_value);
   x = (64 - num_char * 5) / 2;
   cfb_print(display, temp, x, 26);
 
@@ -105,7 +105,7 @@ static void app_oled_update(float magnetic_value)
  ******************************************************************************/
 static void app_oled_init(void)
 {
-  display = DEVICE_DT_GET_ONE(sinowealth_sh1106);
+  display = DEVICE_DT_GET_ONE(solomon_ssd1306fb);
 
   if (NULL == display) {
     LOG_ERR("SparkFun Micro OLED Breakout is not found.");
@@ -114,7 +114,7 @@ static void app_oled_init(void)
   if (!device_is_ready(display)) {
     LOG_ERR("SparkFun Micro OLED Breakout is not ready!");
   }
-  if (display_set_pixel_format(display, PIXEL_FORMAT_MONO10) != 0) {
+  if (display_set_pixel_format(display, PIXEL_FORMAT_MONO01) != 0) {
     LOG_ERR("Failed to set required pixel format");
     return;
   }
@@ -130,7 +130,6 @@ static void app_oled_init(void)
   cfb_framebuffer_set_font(display, SELECTED_FONT_INDEX);
 
   LOG_INF("SparkFun Micro OLED Breakout initialized successfully.");
-  cfb_framebuffer_invert(display);
 }
 
 /***************************************************************************//**
@@ -176,7 +175,7 @@ void app_process_action(void)
     sensor_channel_get(sensor, SENSOR_CHAN_MAGN_Z, &magnetic);
 
     f_magnetic = magnetic.val1 + magnetic.val2 / 1000000;
-    LOG_INF("Magnetic: %.2f mT", f_magnetic);
+    LOG_INF("Magnetic: %.2f mT", (double)f_magnetic);
 
     app_oled_update(f_magnetic);
     k_sleep(K_MSEC(1000));

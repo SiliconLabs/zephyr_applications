@@ -1,13 +1,14 @@
 SET(SOURCES screens/ui_BootScreen.c
     screens/ui_ApplicationScreen.c
     screens/ui_SettingScreen.c
+    screens/ui_TSCalibrationScreen.c
     ui.c
     components/ui_comp_hook.c
     ui_helpers.c
     ui_events.c
     images/ui_img_1597985048.c
     images/ui_img_25_png.c
-    images/ui_img_25_78_png.c
+    images/ui_img_lvgl_logo_78_24_png.c
     images/ui_img_30_60_png.c
     images/ui_img_35_67_png.c)
 

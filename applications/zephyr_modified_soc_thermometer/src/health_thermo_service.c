@@ -3,7 +3,7 @@
  * @brief thermometer source file.
  *******************************************************************************
  * # License
- * <b>Copyright 2022 Silicon Laboratories Inc. www.silabs.com</b>
+ * <b>Copyright 2025 Silicon Laboratories Inc. www.silabs.com</b>
  *******************************************************************************
  *
  * SPDX-License-Identifier: Zlib
@@ -146,8 +146,8 @@ static void temperature_measurement_val_to_buf(double value,
 }
 
 /**************************************************************************//**
-*  measurement interval characteristic read callback.
-******************************************************************************/
+ *  Measurement interval characteristic read callback.
+ ******************************************************************************/
 static ssize_t measure_interval_read_cb(struct bt_conn *conn,
                                         const struct bt_gatt_attr *attr,
                                         void *buf, uint16_t len,
@@ -158,8 +158,8 @@ static ssize_t measure_interval_read_cb(struct bt_conn *conn,
 }
 
 /**************************************************************************//**
-*  measurement interval characteristic read callback.
-******************************************************************************/
+ *  Measurement interval characteristic read callback.
+ ******************************************************************************/
 static ssize_t temperture_type_read_cb(struct bt_conn *conn,
                                        const struct bt_gatt_attr *attr,
                                        void *buf, uint16_t len,

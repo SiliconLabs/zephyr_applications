@@ -1,4 +1,4 @@
-# Copyright (c) 2021 Nordic Semiconductor ASA
+# Copyright (c) 2025 Silicon Laboratories Inc. www.silabs.com
 # SPDX-License-Identifier: Apache-2.0
 
 manifest:
@@ -12,7 +12,7 @@ manifest:
   projects:
     - name: zephyr
       remote: zephyrproject-rtos
-      revision: v3.6.0
+      revision: v4.0.0
       import:
         # By using name-allowlist we can clone only the modules that are
         # strictly needed by the application.

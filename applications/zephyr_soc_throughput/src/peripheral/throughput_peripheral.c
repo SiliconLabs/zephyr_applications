@@ -1,16 +1,16 @@
 /***************************************************************************//**
- * @file
- * @brief Core logic for throughput test peripheral role API.
+ * @file throughput_peripheral.c
+ * @brief
  *******************************************************************************
  * # License
- * <b>Copyright 2023 Silicon Laboratories Inc. www.silabs.com</b>
+ * <b>Copyright 2025 Silicon Laboratories Inc. www.silabs.com</b>
  *******************************************************************************
  *
  * SPDX-License-Identifier: Zlib
  *
  * The licensor of this software is Silicon Laboratories Inc.
  *
- * This software is provided 'as-is', without any express or implied
+ * This software is provided \'as-is\', without any express or implied
  * warranty. In no event will the authors be held liable for any damages
  * arising from the use of this software.
  *
@@ -26,6 +26,12 @@
  *    misrepresented as being the original software.
  * 3. This notice may not be removed or altered from any source distribution.
  *
+ *******************************************************************************
+ * # EXPERIMENTAL QUALITY
+ * This code has not been formally tested and is provided as-is. It is not
+ * suitable for production environments. In addition, this code will not be
+ * maintained and there may be no bug maintenance planned for these resources.
+ * Silicon Labs may update projects from time to time.
  ******************************************************************************/
 #include <stdio.h>
 #include <stdlib.h>
@@ -857,7 +863,7 @@ static void throughput_peripheral_advertising_start(void)
   int err;
 
   struct bt_le_adv_param adv_param = {
-    .options = BT_LE_ADV_OPT_CONNECTABLE | BT_LE_ADV_OPT_SCANNABLE,
+    .options = BT_LE_ADV_OPT_CONN | BT_LE_ADV_OPT_SCANNABLE,
     .interval_min = 200,
     .interval_max = 200,
   };

@@ -3,7 +3,7 @@
  * @brief zephyr application source file.
  *******************************************************************************
  * # License
- * <b>Copyright 2023 Silicon Laboratories Inc. www.silabs.com</b>
+ * <b>Copyright 2025 Silicon Laboratories Inc. www.silabs.com</b>
  *******************************************************************************
  *
  * SPDX-License-Identifier: Zlib
@@ -249,8 +249,8 @@ void app_test(bool start)
 }
 
 /**************************************************************************//**
-*  BLE initialization callback.
-******************************************************************************/
+ *  BLE initialization callback.
+ ******************************************************************************/
 static void bt_ready(int err)
 {
   if (err) {
@@ -261,8 +261,8 @@ static void bt_ready(int err)
 }
 
 /**************************************************************************//**
-*  Button initialization.
-******************************************************************************/
+ *  Button initialization.
+ ******************************************************************************/
 static int button_init(gpio_callback_handler_t handler,
                        const struct gpio_dt_spec *button)
 {
@@ -293,8 +293,8 @@ static int button_init(gpio_callback_handler_t handler,
 }
 
 /**************************************************************************//**
-*  LED initialization.
-******************************************************************************/
+ *  LED initialization.
+ ******************************************************************************/
 static int led_init(void)
 {
   int ret;
@@ -440,8 +440,8 @@ void app_button_timer_callback(struct k_timer *timer)
 }
 
 /**************************************************************************//**
-*  Button callback.
-******************************************************************************/
+ *  Button callback.
+ ******************************************************************************/
 static void button_callback(const struct device *gpiob,
                             struct gpio_callback *cb,
                             uint32_t pins)

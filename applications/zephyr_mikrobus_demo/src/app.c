@@ -3,7 +3,7 @@
  * @brief zephyr mikrobus demo source file.
  *******************************************************************************
  * # License
- * <b>Copyright 2022 Silicon Laboratories Inc. www.silabs.com</b>
+ * <b>Copyright 2025 Silicon Laboratories Inc. www.silabs.com</b>
  *******************************************************************************
  *
  * SPDX-License-Identifier: Zlib
@@ -74,7 +74,7 @@ static void app_oled_update(float magnetic_value)
   cfb_draw_line(display, &line_start_pos, &line_end_pos);
 
   cfb_print(display, "Magnetic: ", 0, 15);
-  snprintf(temp, sizeof(temp), "%.2f mT", magnetic_value);
+  snprintf(temp, sizeof(temp), "%.2f mT", (double)magnetic_value);
   cfb_print(display, temp, 45, 15);
 
   if (abs(magnetic_value) > CONFIG_SI7210_MAGNETIC_THRESHOLD) {
@@ -90,7 +90,7 @@ static void app_oled_update(float magnetic_value)
  ******************************************************************************/
 static void app_oled_init(void)
 {
-  display = DEVICE_DT_GET_ONE(sinowealth_sh1106);
+  display = DEVICE_DT_GET_ONE(solomon_ssd1306fb);
 
   if (NULL == display) {
     LOG_ERR("Mikroe OLED W Cick is not found.");
@@ -115,7 +115,6 @@ static void app_oled_init(void)
   cfb_framebuffer_set_font(display, SELECTED_FONT_INDEX);
 
   LOG_INF("Mikroe OLED W Click initialized successfully.");
-  cfb_framebuffer_invert(display);
 }
 
 /***************************************************************************//**
@@ -161,7 +160,7 @@ void app_process_action(void)
     sensor_channel_get(sensor, SENSOR_CHAN_MAGN_Z, &magnetic);
 
     f_magnetic = magnetic.val1 + magnetic.val2 / 1000000;
-    LOG_INF("Magnetic: %.2f mT", f_magnetic);
+    LOG_INF("Magnetic: %.2f mT", (double)f_magnetic);
 
     app_oled_update(f_magnetic);
     k_sleep(K_MSEC(1000));

@@ -240,7 +240,7 @@ static int icm20689_sensor_init(const struct device *dev)
     LOG_ERR("write REG_SIGNAL_PATH_RESET failed");
     return res;
   }
-  LOG_INF("Init OKE.\n");
+  LOG_INF("Init OK.\n");
 
   /* wait for soft reset to take effect */
   k_msleep(SOFT_RESET_TIME_MS);

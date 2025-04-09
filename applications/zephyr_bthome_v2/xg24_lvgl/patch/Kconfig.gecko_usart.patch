@@ -1,0 +1,12 @@
+diff --git a/zephyr/drivers/spi/Kconfig.gecko_usart b/zephyr/drivers/spi/Kconfig.gecko_usart
+index 87d4c9723c5..5d5f3293db6 100644
+--- a/zephyr/drivers/spi/Kconfig.gecko_usart
++++ b/zephyr/drivers/spi/Kconfig.gecko_usart
+@@ -9,6 +9,6 @@ config SPI_GECKO_USART
+ 	depends on DT_HAS_SILABS_GECKO_SPI_USART_ENABLED
+ 	depends on GPIO
+ 	select SOC_GECKO_USART
+-	select CLOCK_CONTROL_SILABS_SERIES if SOC_FAMILY_SILABS_S2
++	# select CLOCK_CONTROL_SILABS_SERIES if SOC_FAMILY_SILABS_S2
+ 	help
+ 	  Enable the SPI peripherals on Gecko

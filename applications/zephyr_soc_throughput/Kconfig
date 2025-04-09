@@ -1,6 +1,5 @@
 mainmenu "Bluetooth: Throughput"
 
-
 config THROUGHPUT_UI_LOG_ENABLE
    bool "Enable logging"
    default y

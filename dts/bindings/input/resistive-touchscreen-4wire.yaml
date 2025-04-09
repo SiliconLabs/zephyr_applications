@@ -1,4 +1,4 @@
-# Copyright 2023 Google LLC
+# Copyright (c) 2025 Silicon Laboratories Inc. www.silabs.com
 # SPDX-License-Identifier: Apache-2.0
 
 description: |
@@ -28,6 +28,7 @@ compatible: "resistive-touchscreen-4wire"
 include: base.yaml
 
 properties:
+
   poll-period-ms:
     type: int
     default: 15
@@ -71,6 +72,11 @@ properties:
       description: |
         Input value that corresponds to the maximum y value.
 
+  xy-swap:
+      type: boolean
+      description: |
+        Swap x-y coordinator
+
   r-xplate:
       type: int
       required: true
@@ -82,6 +88,22 @@ properties:
       required: true
       description: |
         Input value that corresponds to the resistance threshold of xy plate.
+
+  xm-gpios:
+      type: phandle-array
+      required: true
+
+  xp-gpios:
+      type: phandle-array
+      required: true
+
+  ym-gpios:
+      type: phandle-array
+      required: true
+
+  yp-gpios:
+      type: phandle-array
+      required: true
 
 
 child-binding:
@@ -98,9 +120,3 @@ child-binding:
       description: |
         The input wire of touch screen, typically any of
         INPUT_4WIRE_TS_*.
-
-    control-gpios:
-      type: phandle-array
-      required: true
-      description: |
-        The GPIO for touch point measurement

@@ -1,32 +1,39 @@
-# Zephyr - EFR Connect Demo - Blinky #
+# Zephyr - Simplicity Connect Demo - Blinky #
 
-![Type badge](https://img.shields.io/badge/dynamic/json?url=https://raw.githubusercontent.com/SiliconLabs/application_examples_ci/master/zephyr_applications/zephyr_efr_connect_demo_blinky_common.json&label=Type&query=type&color=green)
-![Technology badge](https://img.shields.io/badge/dynamic/json?url=https://raw.githubusercontent.com/SiliconLabs/application_examples_ci/master/zephyr_applications/zephyr_efr_connect_demo_blinky_common.json&label=Technology&query=technology&color=green)
-![License badge](https://img.shields.io/badge/dynamic/json?url=https://raw.githubusercontent.com/SiliconLabs/application_examples_ci/master/zephyr_applications/zephyr_efr_connect_demo_blinky_common.json&label=License&query=license&color=green)
-![SDK badge](https://img.shields.io/badge/dynamic/json?url=https://raw.githubusercontent.com/SiliconLabs/application_examples_ci/master/zephyr_applications/zephyr_efr_connect_demo_blinky_common.json&label=Zephyr%20version&query=zephyr_verion&color=green)
-![Build badge](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/SiliconLabs/application_examples_ci/master/zephyr_applications/zephyr_efr_connect_demo_blinky_build_status.json)
-![Flash badge](https://img.shields.io/badge/dynamic/json?url=https://raw.githubusercontent.com/SiliconLabs/application_examples_ci/master/zephyr_applications/zephyr_efr_connect_demo_blinky_common.json&label=Flash&query=flash&color=blue)
-![RAM badge](https://img.shields.io/badge/dynamic/json?url=https://raw.githubusercontent.com/SiliconLabs/application_examples_ci/master/zephyr_applications/zephyr_efr_connect_demo_blinky_common.json&label=RAM&query=ram&color=blue)
+![Type badge](https://img.shields.io/badge/Type-Virtual%20Application-green)
+![Technology badge](https://img.shields.io/badge/Technology-Zephyr-green)
+![License badge](https://img.shields.io/badge/License-Zlib-green)
+![SDK badge](https://img.shields.io/badge/Zephyr%20version-v4.0.0-green)
+![Build badge](https://img.shields.io/badge/Build-passing-green)
+![Flash badge](https://img.shields.io/badge/Flash-194.59%20KB-blue)
+![RAM badge](https://img.shields.io/badge/RAM-31.97%20KB-blue)
+
 ## Summary ##
 
 The example demonstrates how the Zephyr OS is supported by the development kits of Silicon Labs. In this example, you can use a BLE central device to control the LED on the mainboard and receive button press notifications.
 
+## Zephyr version ##
+
+- [Zephyr 4.0.0](https://github.com/zephyrproject-rtos/zephyr/tree/v4.0.0)
+
 ## Hardware Required ##
 
-- [EFR32xG24 Dev Kit](https://www.silabs.com/development-tools/wireless/efr32xg24-dev-kit?tab=overview)
+- 1x [Bluetooth Low Energy Development Kit](https://www.silabs.com/development-tools/wireless/bluetooth). Tested boards for working with this example:
 
-**NOTE:**
-Tested boards for working with this example:
+   | Board ID | Description  |
+   | -------- | ------------ |
+   | BRD4184B | [SLTB010A](https://www.silabs.com/development-tools/thunderboard/thunderboard-bg22-kit?tab=overview) EFR32BG22 Thunderboard Kit |
+   | BRD2601B | [xG24-DK2601B](https://www.silabs.com/development-tools/wireless/efr32xg24-dev-kit?tab=overview) EFR32xG24 Dev Kit |
+   | BRD2602A | [xG27-DK2602A](https://www.silabs.com/development-tools/wireless/efr32xg27-development-kit?tab=overview) EFR32xG27 Development Kit |
 
-| Board ID | Description  |
-| ---------------------- | ------ |
-| BRD4184A | [EFR32BG22 Thunderboard Kit - BRD4184A](https://www.silabs.com/development-tools/thunderboard/thunderboard-bg22-kit?tab=overview)    |
-| BRD2602A | [EFR32xG27 Development Kit - BRD2602A](https://www.silabs.com/development-tools/wireless/efr32xg27-development-kit?tab=overview)    |
-| BRD2601B | [EFR32xG24 Dev Kit - BRD2601B](https://www.silabs.com/development-tools/wireless/efr32xg24-dev-kit?tab=overview)    |
+- 1x Smartphone runs the Simplicity Connect Mobile App
 
 ## Connections Required ##
 
-In this example, the only hardware required is the EFR32xG24 Dev Kit. Central devices will transmit data to the Dev Kit via Bluetooth Low Energy (BLE).
+In this example, the kit connects to a mobile phone via BLE.
+
+- Kit sends the button state to mobile phone
+- Kit receives LED control data from mobile phone
 
 ![connection](image/connection.png)
 
@@ -38,11 +45,13 @@ To run the example, you should follow the below steps:
 
 2. Change the current working directory to the `zephyrproject` directory using the `cd` command.
 
-3. Build this project by the following commands with each tested board.
+3. Build this project by the following commands with each tested board. Make sure to change the board name to the right one that you have.
 
-   - EFR32xG24 Dev Kit - BRD2601B: **`west build -p always -b efr32xg24_dk2601b zephyr_applications/applications/zephyr_efr_connect_demo_blinky`**
+   - EFR32BG22 Thunderboard Kit - BRD4184B: **`west build -p -b sltb010a zephyr_applications/applications/zephyr_efr_connect_demo_blinky`**
+   - EFR32xG24 Dev Kit - BRD2601B: **`west build -p -b xg24_dk2601b zephyr_applications/applications/zephyr_efr_connect_demo_blinky`**
+   - EFR32xG27 Dev Kit - BRD2602A: **`west build -p -b xg27_dk2602a zephyr_applications/applications/zephyr_efr_connect_demo_blinky`**
 
-3. Flash the project to the board using **`west flash`** command.
+4. Flash the project to the board using **`west flash`** command.
 
 **Note:**
 
@@ -52,19 +61,21 @@ To run the example, you should follow the below steps:
 
 ## How It Works ##
 
-This example implements a simple custom GATT service with two characteristics. One characteristic controls the state of the LED (ON/OFF) via write operations from a GATT client, and the second characteristic sends notifications to subscribed clients when the button state changes (pressed or released).
+This example implements a simple custom GATT service with two characteristics
 
-To test this demo, install EFR Connect for [Android](https://play.google.com/store/apps/details?id=com.siliconlabs.bledemo&hl=en&gl=US) or [iOS](https://apps.apple.com/us/app/efr-connect-ble-mobile-app/id1030932759).
+- **LED Control**: This characteristic controls the state of the LED (ON/OFF) via write operations from a GATT client.
+- **Report Button**: This characteristic sends notifications to subscribed clients when the button state changes (pressed or released).
 
-After launching the app go to the scan view and try to find **Blinky Example** the connect to it. A pop-up will show all the service and characteristic of it.
+To test this demo, install Simplicity Connect for [Android](https://play.google.com/store/apps/details?id=com.siliconlabs.bledemo&hl=en&gl=US) or [iOS](https://apps.apple.com/us/app/id1030932759).
 
-| ![device](image/device.png) | ![service_characteristic](image/service_characteristic.png)|
-| - | - |
+After launching the app go to the 'Demo' tab and select the Blinky demo. A pop-up will show all the devices around you that are running the SoC-Blinky firmware. Tap on the device to go into the demo view.
 
-If you want to control the LED you just need to write the HEX value into LED Control characteristic (0 for OFF and other values for ON). You can also receive the state of the button if you turn on the notification by tapping on the bell icon.
+![Demo view](image/demo_view.jpg) ![Pop up](image/pop_up.jpg)
 
-### Output ###
+Tap the light on the mobile app to toggle the LED on the mainboard. When you press/release the button on the mainboard the state changes for the virtual button on the app as well.
 
-After following all the above guidelines, you can control the LED and monitor the state of the button as below.
+![LED off](image/led_off.jpg) ![LED on](image/led_on.jpg)
 
-![result](image/result.GIF)
+The animation below showcases the demo running on an EFR32xG24 Dev Kit with the mobile app running on an iPhone.
+
+![result](image/demo.gif)

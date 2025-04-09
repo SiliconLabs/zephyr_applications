@@ -5,5 +5,5 @@ sample:
 
 tests:
   sample.basic.za_si7210_onboard_led:
-    platform_allow : efr32bg22_brd4184a, efr32xg24_dk2601b, efr32bg27_brd2602a
+    platform_allow : efr32bg22_brd4184b, efr32xg24_dk2601b, efr32bg27_brd2602a
     tags: experimental

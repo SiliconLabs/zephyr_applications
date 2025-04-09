@@ -13,7 +13,7 @@ if INPUT_RESISTIVE_TOUCHSCREEN_4WIRE
 
 config INPUT_RESISTIVE_TOUCHSCREEN_4WIRE_THREAD_STACK_SIZE
 	int "Stack size for the analog axis thread"
-	default 762
+	default 1024
 	help
 	  Size of the stack used for the analog axis thread.
 

@@ -1,29 +1,31 @@
 # Zephyr - Si7210 Hall Effect Magnetic Sensor #
 
-![Type badge](https://img.shields.io/badge/dynamic/json?url=https://raw.githubusercontent.com/SiliconLabs/application_examples_ci/master/zephyr_applications/zephyr_si7210_onboard_led_common.json&label=Type&query=type&color=green)
-![Technology badge](https://img.shields.io/badge/dynamic/json?url=https://raw.githubusercontent.com/SiliconLabs/application_examples_ci/master/zephyr_applications/zephyr_si7210_onboard_led_common.json&label=Technology&query=technology&color=green)
-![License badge](https://img.shields.io/badge/dynamic/json?url=https://raw.githubusercontent.com/SiliconLabs/application_examples_ci/master/zephyr_applications/zephyr_si7210_onboard_led_common.json&label=License&query=license&color=green)
-![SDK badge](https://img.shields.io/badge/dynamic/json?url=https://raw.githubusercontent.com/SiliconLabs/application_examples_ci/master/zephyr_applications/zephyr_si7210_onboard_led_common.json&label=Zephyr%20version&query=zephyr_verion&color=green)
-![Build badge](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/SiliconLabs/application_examples_ci/master/zephyr_applications/zephyr_si7210_onboard_led_build_status.json)
-![Flash badge](https://img.shields.io/badge/dynamic/json?url=https://raw.githubusercontent.com/SiliconLabs/application_examples_ci/master/zephyr_applications/zephyr_si7210_onboard_led_common.json&label=Flash&query=flash&color=blue)
-![RAM badge](https://img.shields.io/badge/dynamic/json?url=https://raw.githubusercontent.com/SiliconLabs/application_examples_ci/master/zephyr_applications/zephyr_si7210_onboard_led_common.json&label=RAM&query=ram&color=blue)
+![Type badge](https://img.shields.io/badge/Type-Virtual%20Application-green)
+![Technology badge](https://img.shields.io/badge/Technology-Zephyr-green)
+![License badge](https://img.shields.io/badge/License-Zlib-green)
+![SDK badge](https://img.shields.io/badge/Zephyr%20version-v4.0.0-green)
+![Build badge](https://img.shields.io/badge/Build-passing-green)
+![Flash badge](https://img.shields.io/badge/Flash-44.77%20KB-blue)
+![RAM badge](https://img.shields.io/badge/RAM-7.38%20KB-blue)
 ## Summary ##
 
 The example demonstrates how the Zephyr OS is supported by the development kits of Silicon Labs. In this example, you can see the utilization of the built-in Si7210 Hall Effect Magnetic sensor and an onboard LED with Zephyr OS.
 
 The application makes the detection of magnetic objects possible, and it interacts with the onboard LED, which turns on to indicate a nearby magnetic object.
 
+## Zephyr version ##
+
+- [Zephyr 4.0.0](https://github.com/zephyrproject-rtos/zephyr/tree/v4.0.0)
+
 ## Hardware Required ##
 
- - [EFR32BG22 Thunderboard Kit - BRD4184A](https://www.silabs.com/development-tools/thunderboard/thunderboard-bg22-kit?tab=overview)
+- 1x [Silicon Labs Development Kit](https://www.silabs.com/development-tools). Tested boards for working with this example:
 
-**NOTE:**
-Tested boards for working with this example:
-
-| Board ID | Description  |
-| ---------------------- | ------ |
-| BRD4184A | [EFR32BG22 Thunderboard Kit - BRD4184A](https://www.silabs.com/development-tools/thunderboard/thunderboard-bg22-kit?tab=overview)    |
-| BRD2601B | [EFR32xG24 Dev Kit - BRD2601B](https://www.silabs.com/development-tools/wireless/efr32xg24-dev-kit?tab=overview)    |
+   | Board ID | Description |
+   | -------- | ----------- |
+   | BRD4184B | [SLTB010A](https://www.silabs.com/development-tools/thunderboard/thunderboard-bg22-kit?tab=overview) EFR32BG22 Thunderboard Kit |
+   | BRD2601B | [xG24-DK2601B](https://www.silabs.com/development-tools/wireless/efr32xg24-dev-kit?tab=overview) EFR32xG24 Dev Kit |
+   | BRD2602A | [xG27-DK2602A](https://www.silabs.com/development-tools/wireless/efr32xg27-development-kit?tab=overview) EFR32xG27 Development Kit |
 
 ## Connections Required ##
 
@@ -36,14 +38,16 @@ You need a USB cable, which connects the board to your computer. The following p
 To run the example, you should follow the below steps:
 
 1. Run **Command Prompt** as administrator, initialize the workspace for the project and download the required package, please refer to the [setting up environment](../../README.md#setting-up-environment) section.
-   
+
 2. Change the current working directory to the `zephyrproject` directory using the `cd` command.
 
 3. Build this project by the following commands with a kind of tested board.
 
-   - EFR32BG22 Thunderboard - BRD4184A: **`west build -p -b efr32bg22_brd4184a zephyr_applications/applications/zephyr_si7210_onboard_led`**
+   - EFR32BG22 Thunderboard - BRD4184B: **`west build -p -b sltb010a zephyr_applications/applications/zephyr_si7210_onboard_led`**
 
-   - EFR32xG24 Dev Kit - BRD2601B: **`west build -p -b efr32xg24_dk2601b zephyr_applications/applications/zephyr_si7210_onboard_led`**
+   - EFR32xG24 Dev Kit - BRD2601B: **`west build -p -b xg24_dk2601b zephyr_applications/applications/zephyr_si7210_onboard_led`**
+
+   - EFR32xG27 Dev Kit - BRD2602A: **`west build -p -b xg27_dk2602a zephyr_applications/applications/zephyr_si7210_onboard_led`**
 
 4. Flash the project to the board using **`west flash`** command.
 

@@ -3,7 +3,7 @@
  * @brief zephyr application source file.
  *******************************************************************************
  * # License
- * <b>Copyright 2022 Silicon Laboratories Inc. www.silabs.com</b>
+ * <b>Copyright 2025 Silicon Laboratories Inc. www.silabs.com</b>
  *******************************************************************************
  *
  * SPDX-License-Identifier: Zlib
@@ -50,7 +50,7 @@ LOG_MODULE_REGISTER(app, 3);
  * Definition.
  ******************************************************************************/
 #define BUTTON0         DT_ALIAS(sw0)
-#define DEVICE_NAME     "Zephyr SoC Thermometer"
+#define DEVICE_NAME     "Thermometer Example"
 #define DEVICE_NAME_LEN (sizeof(DEVICE_NAME) - 1)
 
 /***************************************************************************//**
@@ -66,7 +66,8 @@ static const struct device *const dev = DEVICE_DT_GET_ANY(silabs_si7210);
 struct bt_conn *ble_conn = NULL;
 static const struct bt_data ad[] = {
   BT_DATA_BYTES(BT_DATA_FLAGS, (BT_LE_AD_GENERAL | BT_LE_AD_NO_BREDR)),
-  BT_DATA_BYTES(BT_DATA_UUID16_ALL, 0xaa, 0xfe),
+  BT_DATA_BYTES(BT_DATA_UUID16_ALL, 0x09, 0x18),
+  BT_DATA(BT_DATA_NAME_COMPLETE, DEVICE_NAME, DEVICE_NAME_LEN),
 };
 
 /***************************************************************************//**
@@ -165,7 +166,7 @@ static void bt_ready(int err)
   LOG_INF("Bluetooth initialized");
 
   /* Start advertising */
-  err = bt_le_adv_start(BT_LE_ADV_CONN_NAME, ad, ARRAY_SIZE(ad), NULL, 0);
+  err = bt_le_adv_start(BT_LE_ADV_CONN_FAST_2, ad, ARRAY_SIZE(ad), NULL, 0);
   if (err) {
     LOG_ERR("Advertising failed to start (err %d)", err);
     return;

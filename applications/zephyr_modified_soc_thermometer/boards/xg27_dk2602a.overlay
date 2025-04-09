@@ -1,0 +1,14 @@
+/*
+ * Copyright (c) 2025 Silicon Laboratories Inc. www.silabs.com
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * I2C interface for the Si7210
+ */
+
+&i2c0 {
+	si7210: si7210@30 {
+		compatible = "silabs,si7210";
+		reg = <0x30>;
+	};
+};

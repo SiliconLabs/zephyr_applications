@@ -1,0 +1,31 @@
+/*
+ * Copyright (c) 2025 Silicon Laboratories Inc. www.silabs.com
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+&usart0 {
+	ssd1306:ssd1306@0 {
+		status = "okay";
+		compatible = "solomon,ssd1306fb";
+		reg = <0>;
+		width = <96>;
+		height = <40>;
+		segment-offset = <0x20>;
+		page-offset = <0>;
+		display-offset = <0>;
+		multiplex-ratio = <38>;
+		segment-remap;
+		inversion-on;
+		com-invdir;
+		prechargep = <0x25>;
+		spi-max-frequency = <8000000>;
+		data_cmd-gpios = <&gpioa 4 GPIO_ACTIVE_HIGH>;
+		reset-gpios = <&gpiob 1 GPIO_ACTIVE_LOW>;
+	};
+
+	cs-gpios = <&gpiob 2 GPIO_ACTIVE_LOW>;
+	mx25r80: mx25r8035f@0 {
+		status = "disabled";
+	};
+};

@@ -1,27 +1,30 @@
 # Zephyr - Bluetooth - Modified SoC Thermometer #
 
-![Type badge](https://img.shields.io/badge/dynamic/json?url=https://raw.githubusercontent.com/SiliconLabs/application_examples_ci/master/zephyr_applications/zephyr_modified_soc_thermometer_common.json&label=Type&query=type&color=green)
-![Technology badge](https://img.shields.io/badge/dynamic/json?url=https://raw.githubusercontent.com/SiliconLabs/application_examples_ci/master/zephyr_applications/zephyr_modified_soc_thermometer_common.json&label=Technology&query=technology&color=green)
-![License badge](https://img.shields.io/badge/dynamic/json?url=https://raw.githubusercontent.com/SiliconLabs/application_examples_ci/master/zephyr_applications/zephyr_modified_soc_thermometer_common.json&label=License&query=license&color=green)
-![SDK badge](https://img.shields.io/badge/dynamic/json?url=https://raw.githubusercontent.com/SiliconLabs/application_examples_ci/master/zephyr_applications/zephyr_modified_soc_thermometer_common.json&label=Zephyr%20version&query=zephyr_verion&color=green)
-![Build badge](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/SiliconLabs/application_examples_ci/master/zephyr_applications/zephyr_modified_soc_thermometer_build_status.json)
-![Flash badge](https://img.shields.io/badge/dynamic/json?url=https://raw.githubusercontent.com/SiliconLabs/application_examples_ci/master/zephyr_applications/zephyr_modified_soc_thermometer_common.json&label=Flash&query=flash&color=blue)
-![RAM badge](https://img.shields.io/badge/dynamic/json?url=https://raw.githubusercontent.com/SiliconLabs/application_examples_ci/master/zephyr_applications/zephyr_modified_soc_thermometer_common.json&label=RAM&query=ram&color=blue)
+![Type badge](https://img.shields.io/badge/Type-Virtual%20Application-green)
+![Technology badge](https://img.shields.io/badge/Technology-Zephyr-green)
+![License badge](https://img.shields.io/badge/License-Zlib-green)
+![SDK badge](https://img.shields.io/badge/Zephyr%20version-v4.0.0-green)
+![Build badge](https://img.shields.io/badge/Build-passing-green)
+![Flash badge](https://img.shields.io/badge/Flash-201.5%20KB-blue)
+![RAM badge](https://img.shields.io/badge/RAM-32.75%20KB-blue)
 ## Summary ##
 
 This example implements the Health Thermometer service. It enables a peer device to connect and receive temperature values via Bluetooth. The reported values are measured by a temperature sensor located on the mainboard.
 
+## Zephyr version ##
+
+- [Zephyr 4.0.0](https://github.com/zephyrproject-rtos/zephyr/tree/v4.0.0)
+
 ## Hardware Required ##
 
-- [EFR32xG24 Dev Kit](https://www.silabs.com/development-tools/wireless/efr32xg24-dev-kit?tab=overview)
+- 1x [Bluetooth Low Energy Development Kit](https://www.silabs.com/development-tools/wireless/bluetooth). Tested boards for working with this example:
 
-**NOTE:**
-Tested boards for working with this example:
+   | Board ID | Description  |
+   | -------- | ------------ |
+   | BRD2601B | [xG24-DK2601B](https://www.silabs.com/development-tools/wireless/efr32xg24-dev-kit?tab=overview) EFR32xG24 Dev Kit |
+   | BRD2602A | [xG27-DK2602A](https://www.silabs.com/development-tools/wireless/efr32xg27-development-kit?tab=overview) EFR32xG27 Development Kit |
 
-| Board ID | Description  |
-| ---------------------- | ------ |
-| BRD2601B | [EFR32xG24 Dev Kit - BRD2601B](https://www.silabs.com/development-tools/wireless/efr32xg24-dev-kit?tab=overview)    |
-| BRD2602A | [EFR32xG27 Dev Kit - BRD2602A](https://www.silabs.com/development-tools/wireless/efr32xg27-development-kit?tab=overview)    |
+- 1x Smartphone runs the Simplicity Connect Mobile App
 
 ## Connections Required ##
 
@@ -34,14 +37,14 @@ In this example, the only hardware required is the EFR32xG24 Dev Kit. Central de
 To run the example, you should follow the below steps:
 
 1. Run **Command Prompt** as administrator, initialize the workspace for the project and download the required package, please refer to the [setting up environment](../../README.md#setting-up-environment) section.
-   
+
 2. Change the current working directory to the `zephyrproject` directory using the `cd` command.
 
 3. Build this project by the following commands with each tested board.
 
-   - EFR32xG24 Dev Kit - BRD2601B: **`west build -p -b efr32xg24_dk2601b zephyr_applications/applications/zephyr_modified_soc_thermometer`**
+   - EFR32xG24 Dev Kit - BRD2601B: **`west build -p -b xg24_dk2601b zephyr_applications/applications/zephyr_modified_soc_thermometer`**
 
-   - EFR32xG27 Dev Kit - BRD2602A: **`west build -p -b efr32bg27_brd2602a zephyr_applications/applications/zephyr_modified_soc_thermometer`**
+   - EFR32xG27 Dev Kit - BRD2602A: **`west build -p -b xg27_dk2602a zephyr_applications/applications/zephyr_modified_soc_thermometer`**
 
 4. Flash the project to the board using **`west flash`** command.
 
@@ -55,15 +58,29 @@ To run the example, you should follow the below steps:
 
 This example implements the predefined Thermometer Service. The Health Thermometer service exposes temperature and other data from a thermometer intended for healthcare and fitness applications.
 
-To test this demo, install EFR Connect for [Android](https://play.google.com/store/apps/details?id=com.siliconlabs.bledemo&hl=en&gl=US) or [iOS](https://apps.apple.com/us/app/efr-connect-ble-mobile-app/id1030932759).
+To test this demo, install Simplicity Connect for [Android](https://play.google.com/store/apps/details?id=com.siliconlabs.bledemo&hl=en&gl=US) or [iOS](https://apps.apple.com/us/app/efr-connect-ble-mobile-app/id1030932759).
 
-After launching the app go to the scan view and try to find **Zephyr** the connect to it. A pop-up will show all the services and characteristics of it.
+1. Open the Simplicity Connect app on your smartphone and allow the permission requested the first time it is opened.
 
-| ![efr connect to device](image/efr_connect_to_device.png) | ![efr connect health thermo service](image/efr_connect_health_thermo_service.png)
+2. Click [Scan]. You will see a list of nearby devices that are sending Bluetooth advertisement. Find the one named "Thermometer Example" and click the connect button on the right side.
+
+   ![efr connect scanning](image/scanning.png)
+
+3. Wait for the connection to establish and GATT database to be loaded, then find the Health Thermometer service, and click More Info.
+
+   ![efr connect more info](image/more_info.png)
+
+4. Four characteristics will show up. Find the Temperature Measurement and press the indicate button. Then, you will see the temperature value getting updated periodically.
+
+   ![efr connect indicate](image/indicate.png)
+
+Alternatively, you can follow the steps below instead of steps 2-4 to use the Health Thermometer feature in the app. This will automatically scan and list devices advertising the Health Thermometer service and, upon connection, will automatically enable notifications and display the temperature data.
+
+![Demo view](image/demo_view.png) ![Pop up](image/pop_up.png)
 
 To monitor the temperature, select Health Thermometer service, and then tap the Indicate button on Temperature measurement characteristic, now the temperature will update periodically.
 
-| ![efr connect temperature characteristic](image/efr_connect_temperature_measurement.png) | ![efr connect read temperature](image/efr_connect_read_temperature.png)
+![log](image/display.png)
 
 You also see the log from the thermometer device to track the status.
 

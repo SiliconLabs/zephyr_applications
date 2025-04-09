@@ -1,16 +1,32 @@
 # Zephyr - BTHome v2 - xG24/xG27 sensors with LVGL #
 
+![Type badge](https://img.shields.io/badge/Type-Virtual%20Application-green)
+![Technology badge](https://img.shields.io/badge/Technology-Zephyr-green)
+![License badge](https://img.shields.io/badge/License-Zlib-green)
+![SDK badge](https://img.shields.io/badge/Zephyr%20version-v4.0.0-green)
+[![Required board](https://img.shields.io/badge/Adafruit-2.8"%20TFT%20LCD%20with%20Touchscreen%20Breakout%20Board%20w/MicroSD%20Socket-green)](https://www.adafruit.com/product/1770)
+![Build badge](https://img.shields.io/badge/Build-passing-green)
+![Flash badge](https://img.shields.io/badge/Flash-236.08%20KB-blue)
+![RAM badge](https://img.shields.io/badge/RAM-48.71%20KB-blue)
 ## Summary ##
 
 This example demonstrates communication between xG24 and xG27 Dev Kits, based on Zephyr OS and a Home Assistant server. By using the Home Assistant, you could monitor sensor values, such as temperature, humidity, illuminance, etc. Additionally, it is also possible to interact with devices by touching the screen directly, which is designed with the LVGL library.
 
+## Zephyr version ##
+
+- [Zephyr 4.0.0](https://github.com/zephyrproject-rtos/zephyr/tree/v4.0.0)
+
 ## Hardware Required ##
 
-- [EFR32xG24 Development Kit - DK2601B](https://www.silabs.com/development-tools/wireless/efr32xg24-dev-kit?tab=overview)
+- 1x [xG24-DK2601B](https://www.silabs.com/development-tools/wireless/efr32xg24-dev-kit?tab=overview) EFR32xG24 Development Kit
 
-- [EFR32xG27 Development Kit - BRD2602A](https://www.silabs.com/development-tools/wireless/efr32xg27-development-kit?tab=overview)
+- 1x [xG27-DK2602A](https://www.silabs.com/development-tools/wireless/efr32xg27-development-kit?tab=overview) EFR32xG27 Development Kit
 
-- [2.8" TFT LCD with Touchscreen Breakout Board w/MicroSD Socket - ILI9341](https://www.adafruit.com/product/1770)
+- 1x [2.8" TFT LCD with Touchscreen Breakout Board w/MicroSD Socket - ILI9341](https://www.adafruit.com/product/1770)
+
+- 1x Raspberry Pi 4 runs Home Assistant OS
+
+- 1x Smartphone runs Home Assistant application
 
 ## Connections Required ##
 
@@ -18,19 +34,33 @@ In this example, the EFR32xG24 and EFR32xG27 Development Kits are required. Usin
 
 ![connection](image/connection.png)
 
+To connect the Adafruit 2.8" TFT LCD (with Touchscreen) with the EFR32xG24 Development Kit, you can see the pins mapping table below.
+
+| EFR32xG24 Dev Kit | Connection | Pin function |
+| --- | --- | --- |
+| PA6 | D/C | GPIO |
+| PA5 | CS | SPI CS |
+| PC1 | CLK | SPI SCK |
+| PC2 | MISO | SPI MISO |
+| PC3 | MOSI | SPI MOSI |
+| PB2 | XM(X-) | AN |
+| PD2 | XP(X+) | AN |
+| PB3 | YM(Y-) | AN |
+| PB0 | YP(Y+) | AN |
+
 ## Setup ##
 
 To run the example, you should follow the below steps:
 
 1. Run **Command Prompt** as administrator, initialize the workspace for the project and download the required package. For more information, see the [setting up environment](../../README.md#setting-up-environment) section.
-   
+
 2. Change the current working directory to the `zephyrproject` directory using the `cd` command.
 
 3. Build this project by the following commands with each tested board.
 
-   - EFR32xG24 Dev Kit - BRD2601B: **`west build -p -b efr32xg24_dk2601b zephyr_applications/applications/zephyr_bthome_v2/xg24_lvgl`**
+   - EFR32xG24 Dev Kit - BRD2601B: **`west build -p -b xg24_dk2601b zephyr_applications/applications/zephyr_bthome_v2/xg24_lvgl`**
 
-   - EFR32xG27 Dev Kit - BRD2602A: **`west build -p -b efr32bg27_brd2602a zephyr_applications/applications/zephyr_bthome_v2/xg27_cli`**
+   - EFR32xG27 Dev Kit - BRD2602A: **`west build -p -b xg27_dk2602a zephyr_applications/applications/zephyr_bthome_v2/xg27_cli`**
 
 4. Flash the project to the board using **`west flash`** command.
 
@@ -38,7 +68,7 @@ To run the example, you should follow the below steps:
 
 - A patch file needs to be applied to the EFR32xG24 Dev Kit to fix the known bugs. From the `zephyrproject` directory, use the following command to apply:
 
-  `git apply zephyr_applications/applications/zephyr_bthome_v2/xg24_lvgl/patch/spi_gecko.patch`
+  `git apply zephyr_applications/applications/zephyr_bthome_v2/xg24_lvgl/patch/Kconfig.gecko_usart.patch`
 
 - Make sure that the Zephyr OS environment has already been installed. To install the Zephyr OS environment, you can refer to [this guide](../../README.md#setting-up-environment).
 
@@ -62,6 +92,32 @@ The xG24 Development Kit is combined with a 2.8" TFT touch LCD, which utilizes t
 - Turn ON/OFF broadcasting
 
 ![bthome_params](image/xg24_config.png)
+
+## Calibration for Touch function ##
+
+Adafruit ILI9341 uses 4 resistive touch pins (Y+ X+ Y- X-) to determine touch points. We will read the analog values from these pins to detect where the touched point is on the screen. This process will surely have uncertainties so we have to calibrate it to detect touched points properly. Please follow these steps below to calibrate the touch screen.
+
+The calibration parameters can be configured through the settings of the device tree overlay of the board, which is located in applications/xg24_lvgl/boards/xg24_dk2601b.overlay:
+
+![dts overlay](image/dts_resistive_touch_node.png)
+
+Follow the steps below to calibrate the touch screen.
+
+1. Enter calibration mode by tapping on the LGVL logo
+
+   ![calib_menu](image/calib_menu.jpg)
+
+2. Measuring 2 points at 2 conners: top left (Xmin, Ymin), bottom right (Xmax, Ymax)
+    - Calib Xmin: minimum raw value of X
+    - Calib Xmax: maximum raw value of X
+    - Calib Ymin: minimum raw value of Y
+    - Calib Ymax: maximum raw value of Y
+
+    ![calib_screen](image/calib_screen.jpg)
+
+3. Use 4 parameters: Xmin, Ymin, Xmax, Ymax as the properties of the resistive node in the device tree overlay.
+
+4. Rebuild the project
 
 ### Device Configuration ###
 
@@ -108,4 +164,3 @@ By the xG27 Dev Kit device, launch Console, which is integrated into Simplicity 
 As the result of this example, you can see the threshold and the measured values of the magnetic induction.
 
 ![output](image/output.gif)
-
